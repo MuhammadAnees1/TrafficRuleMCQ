@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import java.util.List;
 import java.util.Locale;
+
 public class MainActivity extends AppCompatActivity {
     private TextView questionTextView;
     private RadioButton option1RadioButton,option2RadioButton,option3RadioButton,option4RadioButton;
@@ -59,44 +60,20 @@ public class MainActivity extends AppCompatActivity {
             Question currentQuestion = questionList.get(currentQuestionIndex);
             int correctAnswerIndex = currentQuestion.getCorrectAnswerIndex();
 
-            // Check if the selected answer is correct
-            boolean isCorrect = isAnswerCorrect(selectedAnswer, correctAnswerIndex);
+            // Apply colors to the radio buttons based on the selected and correct answers
+            setOptionColor(option1RadioButton, selectedAnswer, correctAnswerIndex, 0);
+            setOptionColor(option2RadioButton, selectedAnswer, correctAnswerIndex, 1);
+            setOptionColor(option3RadioButton, selectedAnswer, correctAnswerIndex, 2);
+            setOptionColor(option4RadioButton, selectedAnswer, correctAnswerIndex, 3);
 
             // Increment the score if the answer is correct
-            if (isCorrect) {
-                // Apply colors to the radio buttons
-                setOptionColor(option1RadioButton, selectedAnswer, correctAnswerIndex, 0);
-                setOptionColor(option2RadioButton, selectedAnswer, correctAnswerIndex, 1);
-                setOptionColor(option3RadioButton, selectedAnswer, correctAnswerIndex, 2);
-                setOptionColor(option4RadioButton, selectedAnswer, correctAnswerIndex, 3);
+            if (selectedAnswer == correctAnswerIndex) {
                 score++;
-
-            }
-            else {
-                RowngOptionColor(option1RadioButton, selectedAnswer, correctAnswerIndex, 0);
-                RowngOptionColor(option2RadioButton, selectedAnswer, correctAnswerIndex, 1);
-                RowngOptionColor(option3RadioButton, selectedAnswer, correctAnswerIndex, 2);
-                RowngOptionColor(option4RadioButton, selectedAnswer, correctAnswerIndex, 3);
             }
 
-
-//            // Move to the next question or show the final score
-//            if (currentQuestionIndex < questionList.size() - 1) {
-//                currentQuestionIndex++;
-//                displayQuestion();
-//            } else {
-//                showFinalScore();
-//            }
             submitButton.setVisibility(View.INVISIBLE);
+            disableOptions();
         });
-
-        // Set up listener for the previous button
-//        previousButton.setOnClickListener(view -> {
-//            if (currentQuestionIndex > 0) {
-//                currentQuestionIndex--;
-//                displayQuestion();
-//            }
-//        });
 
 
 
@@ -104,86 +81,75 @@ public class MainActivity extends AppCompatActivity {
         nextButton.setOnClickListener(view -> {
             if (currentQuestionIndex < questionList.size() - 1) {
                 currentQuestionIndex++;
-                // Reset radio button colors
-                resetOptionColor(option1RadioButton);
-                resetOptionColor(option2RadioButton);
-                resetOptionColor(option3RadioButton);
-                resetOptionColor(option4RadioButton);
                 displayQuestion();
             } else {
                 showFinalScore();
             }
         });
     }
-        private void resetTimer() {
-            if (countDownTimer != null) {
-                countDownTimer.cancel();
+        private void disableOptions () {
+            option1RadioButton.setEnabled(false);
+            option2RadioButton.setEnabled(false);
+            option3RadioButton.setEnabled(false);
+            option4RadioButton.setEnabled(false);
+        }
+        private void setOptionColor (RadioButton radioButton,int selectedAnswer, int correctAnswer, int optionIndex) {
+
+        if (optionIndex == selectedAnswer) {
+                // Selected option
+                if (selectedAnswer == correctAnswer) {
+                    // Correct option
+                    radioButton.setTextColor(Color.GREEN);
+                } else {
+                    // Incorrect option
+                    radioButton.setTextColor(Color.RED);
+                }
+            } else if (optionIndex == correctAnswer) {
+                // Correct option
+                radioButton.setTextColor(Color.GREEN);
+            } else {
+                // Other options
+                radioButton.setTextColor(Color.BLACK);
             }
-            startTimer();
         }
-    private void setOptionColor(RadioButton radioButton, int selectedAnswer, int correctAnswer, int optionIndex) {
-        if (optionIndex == selectedAnswer && selectedAnswer == correctAnswer) {
-            // Selected and correct option
-            radioButton.setTextColor(Color.GREEN);
-            radioButton.setBackgroundResource(R.drawable.is);
-        } else if (optionIndex != selectedAnswer) {
-            // Selected and incorrect option
-            radioButton.setTextColor(Color.RED);
-        } else if (optionIndex == correctAnswer) {
-            // Correct option
-            radioButton.setTextColor(Color.GREEN);
-        }
-        else {
-            // Other options
-            radioButton.setTextColor(Color.BLACK);
-        }
-    }
-    private void resetOptionColor(RadioButton radioButton) {
+
+        private void resetOptionColor(RadioButton radioButton) {
         radioButton.setTextColor(Color.BLACK); // Set the default color to black
         radioButton.setBackgroundResource(R.drawable.mcq_background);
     }
-    private void RowngOptionColor(RadioButton radioButton, int selectedAnswer, int correctAnswer, int optionIndex) {
-        if (optionIndex == selectedAnswer && selectedAnswer != correctAnswer) {
-            // Selected and correct option
-            radioButton.setTextColor(Color.RED);
-            radioButton.setBackgroundResource(R.drawable.worng);
-        } else if (optionIndex == selectedAnswer) {
-            // Selected and incorrect option
-            radioButton.setTextColor(Color.GREEN);
-        } else if (optionIndex == correctAnswer) {
-            // Correct option
-            radioButton.setTextColor(Color.GREEN);
-        }
-        else {
-            // Other options
-            radioButton.setTextColor(Color.BLACK);
-        }
-    }
     private void displayQuestion() {
-
+        option1RadioButton.setEnabled(true);
+        option2RadioButton.setEnabled(true);
+        option3RadioButton.setEnabled(true);
+        option4RadioButton.setEnabled(true);
         // Get the current question
-
         Question currentQuestion = questionList.get(currentQuestionIndex);
         String questionText = currentQuestion.getQuestionText();
         List<String> options = currentQuestion.getOptions();
-
         // Display the question and answer options
         questionTextView.setText(questionText);
         option1RadioButton.setText(options.get(0));
         option2RadioButton.setText(options.get(1));
         option3RadioButton.setText(options.get(2));
         option4RadioButton.setText(options.get(3));
-
         resetTimer();
-        submitButton.setVisibility(View.VISIBLE);
+        resetOptionColor(option1RadioButton);
+        resetOptionColor(option2RadioButton);
+        resetOptionColor(option3RadioButton);
+        resetOptionColor(option4RadioButton);
 
+        submitButton.setVisibility(View.VISIBLE);
         // Set the selected answer
         option1RadioButton.setChecked(false);
         option2RadioButton.setChecked(false);
         option3RadioButton.setChecked(false);
         option4RadioButton.setChecked(false);
-
-
+    }
+    private void resetTimer() {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+        startTimer();
     }
     private int getSelectedAnswer() {
         if (option1RadioButton.isChecked()) {
@@ -233,8 +199,5 @@ public class MainActivity extends AppCompatActivity {
         if (countDownTimer != null) {
             countDownTimer.cancel();
         }
-    }
-    private boolean isAnswerCorrect(int selectedAnswer, int correctAnswer) {
-        return selectedAnswer == correctAnswer;
     }
 }
