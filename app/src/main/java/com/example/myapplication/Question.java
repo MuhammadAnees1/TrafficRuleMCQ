@@ -13,6 +13,10 @@ public class Question {
         this.correctAnswerIndex = correctAnswerIndex;
     }
 
+    public Question(String question, String choice) {
+
+    }
+
     public String getQuestionText() {
         return questionText;
     }
@@ -24,4 +28,6 @@ public class Question {
     public int getCorrectAnswerIndex() {
         return correctAnswerIndex;
     }
+
+
 }
