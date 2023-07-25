@@ -3,26 +3,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
+    android:background="#fef4df"
     tools:context=".MainActivity3">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/backgroundImageView"
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:rotation="90"
-        android:src="@drawable/img"
-        />
+        android:background="@drawable/view_background">
 
     <TextView
-        android:id="@+id/timerTextView"
+        android:id="@+id/timerTextView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="16sp"
         android:textColor="#FF0000"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="10dp"
-        android:text="00:00" />
+        android:layout_margin="10dp"
+        android:text="00:00"
+        tools:ignore="MissingConstraints" />
 
     <TextView
         android:id="@+id/question"
@@ -31,70 +34,55 @@
         android:layout_marginBottom="10dp"
         android:textSize="18sp"
         android:textStyle="bold"
+        android:textColor="@color/black"
         android:layout_marginTop="40dp"
         tools:text="Question" />
 
-    <TextView
-        android:id="@+id/questionTextView1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:layout_margin="10dp"
-        android:layout_below="@+id/question"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        tools:text="Question Text" />
+    </RelativeLayout>
 
+        <TextView
+            android:id="@+id/questionTextView1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/question"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:text="Question Text" />
     <ImageView
-        android:visibility="gone"
         android:id="@+id/questionImageView"
         android:layout_width="match_parent"
-        android:layout_height="160dp"
-        android:layout_below="@+id/questionTextView1"
-        android:rotation="90"
+        android:layout_height="200dp"
+        android:src="@drawable/picture"
         />
 
+        <RadioGroup
+            android:id="@+id/optionRadioGroup2"
+            style="@style/RadioButtonNoButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_margin="30dp"
+            android:orientation="vertical"
+            tools:ignore="SpeakableTextPresentCheck">
 
-    <RadioGroup
-        android:id="@+id/optionRadioGroup"
+        </RadioGroup>
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/nextButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/questionImageView"
-        android:layout_margin="15dp"
-        android:orientation="vertical">
-
-           </RadioGroup>
-
-    <!--    <Button-->
-    <!--        android:id="@+id/privieusButton"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_below="@id/optionRadioGroup"-->
-    <!--        android:layout_centerHorizontal="true"-->
-    <!--        android:layout_marginTop="16dp"-->
-    <!--        android:text="Submit"-->
-    <!--        tools:ignore="TextSizeCheck" />-->
-
-
-    <Button
-        android:id="@+id/nextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/optionRadioGroup"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="16dp"
-        android:text="Next" />
-
-    <Button
-        android:visibility="gone"
-        android:id="@+id/submitButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/optionRadioGroup"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="16dp"
-        android:text="Submit"
-        tools:ignore="TextSizeCheck" />
-
-
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="35dp"
+        android:layout_marginTop="35dp"
+        android:layout_marginEnd="35dp"
+        android:layout_marginBottom="35dp"
+        android:background="@drawable/button_background"
+        android:text="Next"
+        android:textColor="@color/white"
+        android:textSize="20sp" />
 </RelativeLayout>

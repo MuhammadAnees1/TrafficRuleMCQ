@@ -35,7 +35,7 @@ public class MainActivity4 extends AppCompatActivity {
         setContentView(R.layout.activity_main4);
 
         questionTextView = findViewById(R.id.questionTextView2);
-        optionRadioGroup = findViewById(R.id.optionRadioGroup1);
+        optionRadioGroup = findViewById(R.id.optionRadioGroup5);
         nextButton = findViewById(R.id.nextButton1);
         submitButton = findViewById(R.id.submitButton1);
 

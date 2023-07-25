@@ -1,0 +1,35 @@
+<!-- res/drawable/radio_button_background.xml -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Unchecked state -->
+    <item android:state_checked="false">
+        <layer-list>
+            <item android:drawable="@drawable/mncq_background" />
+            <!-- Adjust the margin as per your requirement -->
+            <item
+                android:top="8dp"
+                android:right="8dp"
+                android:bottom="8dp"
+                android:left="8dp">
+                <shape android:shape="rectangle">
+                    <solid android:color="@android:color/transparent" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <!-- Checked state -->
+    <item android:state_checked="true">
+        <layer-list>
+            <item android:drawable="@drawable/mncq_background" />
+            <!-- Adjust the margin as per your requirement -->
+            <item
+                android:top="8dp"
+                android:right="8dp"
+                android:bottom="8dp"
+                android:left="8dp">
+                <shape android:shape="rectangle">
+                    <solid android:color="@android:color/transparent" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</selector>

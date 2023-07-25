@@ -36,10 +36,13 @@
         android:id="@+id/questionTextView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:layout_margin="10dp"
         android:layout_below="@+id/question"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
         android:textColor="@color/black"
+        android:textSize="18sp"
         android:textStyle="bold"
         tools:text="Question Text" />
 
@@ -54,7 +57,7 @@
 
 
     <RadioGroup
-        android:id="@+id/optionRadioGroup1"
+        android:id="@+id/optionRadioGroup5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/questionImageView"
@@ -78,7 +81,7 @@
         android:id="@+id/nextButton1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/optionRadioGroup1"
+        android:layout_below="@id/optionRadioGroup5"
         android:layout_alignParentStart="true"
         android:layout_marginTop="16dp"
         android:text="Next" />
@@ -88,7 +91,7 @@
         android:id="@+id/submitButton1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/optionRadioGroup1"
+        android:layout_below="@id/optionRadioGroup5"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="16dp"
         android:text="Submit"

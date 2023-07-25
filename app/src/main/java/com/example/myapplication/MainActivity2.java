@@ -191,3 +191,7 @@ public class MainActivity2 extends AppCompatActivity {
         }
     }
 }
+//
+//    RadioButton selectedRadioButton = findViewById(checkedId);
+//                    if (selectedRadioButton != null) {
+//                            String selectedOption = selectedRadioButton.getText().toString();
