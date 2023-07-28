@@ -45,11 +45,21 @@ public class MainActivity3 extends AppCompatActivity {
      private CountDownTimer countDownTimer;
      private static final long COUNTDOWN_DURATION = 30000; // 30 seconds
      int Score = 0;
-     Map<String, String> questionMap = new HashMap<>();
+
+    private TextView[] dotViews = new TextView[5];
+    private int currentQuestionIndex = 0;
+
+    Map<String, String> questionMap = new HashMap<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main3);
+
+        dotViews[0] = findViewById(R.id.dotView1);
+        dotViews[1] = findViewById(R.id.dotView2);
+        dotViews[2] = findViewById(R.id.dotView3);
+        dotViews[3] = findViewById(R.id.dotView4);
+        dotViews[4] = findViewById(R.id.dotView5);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -83,7 +93,19 @@ public class MainActivity3 extends AppCompatActivity {
         nextButton.setOnClickListener(view -> {
             showNextQuestion();
         });
+        int numberOfQuestions = questionMap.size();
+        for (int i = 0; i < dotViews.length; i++) {
+            if (i < numberOfQuestions) {
+                String questionKey = questionMap.keySet().toArray()[i].toString();
+                dotViews[i].setText(String.format(Locale.getDefault(), "%02d", i + 1));
+                dotViews[i].setVisibility(View.VISIBLE); // Set visibility to VISIBLE (in case it was set to GONE)
+            }
+        }
+
+        // Set initial color for the first question number
+        dotViews[currentQuestionIndex].setTextColor(Color.parseColor("#FFFFFF"));
     }
+
     private void fetchQuestions() {
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -125,11 +147,10 @@ public class MainActivity3 extends AppCompatActivity {
                 }
             }
             String imageURL = choicesArray[choicesArray.length - 1];
-            ImageView imageView = findViewById(R.id.questionImageView4); // Replace imageView with the ID of your ImageView
+            ImageView imageView = findViewById(R.id.questionImageView4);
             Glide.with(this)
                     .load(imageURL)
 //                    .placeholder(R.drawable.picture)
-
                     .into(imageView);
 
             startTimer();
@@ -186,13 +207,19 @@ public class MainActivity3 extends AppCompatActivity {
         Toast.makeText(MainActivity3.this, "Your score: " + Score, Toast.LENGTH_SHORT).show();
     }
     private void showNextQuestion() {
-        if (currentQuestionNumber < questionMap.size() - 1) {
-            currentQuestionNumber++;
-            String questionKey = questionMap.keySet().toArray()[currentQuestionNumber].toString();
+        // Remove color for the current question number
+        dotViews[currentQuestionIndex].setTextColor(Color.parseColor("#000000"));
+
+        if (currentQuestionIndex < questionMap.size() - 1) {
+            currentQuestionIndex++;
+            String questionKey = questionMap.keySet().toArray()[currentQuestionIndex].toString();
             setQuestion(questionKey);
         } else {
             showFinalScore();
         }
+
+        // Set color for the new current question number
+        dotViews[currentQuestionIndex].setTextColor(Color.parseColor("#FFFFFF"));
     }
     private void startTimer() {
         countDownTimer = new CountDownTimer(COUNTDOWN_DURATION, 1000) {
