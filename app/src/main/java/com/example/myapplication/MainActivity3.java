@@ -12,6 +12,7 @@ import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -19,13 +20,16 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
+import androidx.appcompat.widget.AppCompatRadioButton;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -47,8 +51,6 @@ public class MainActivity3 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main3);
 
-
-
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             Drawable actionBarBackground = getResources().getDrawable(R.drawable.view_background);
@@ -64,6 +66,11 @@ public class MainActivity3 extends AppCompatActivity {
             // Set the styled SpannableString as the title
             actionBar.setTitle(spannableString);
         }
+
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+
         questionTextView = findViewById(R.id.questionTextView1);
         option1RadioGroup = findViewById(R.id.optionRadioGroup2);
         timerTextView = findViewById(R.id.timerTextView1);
@@ -76,14 +83,6 @@ public class MainActivity3 extends AppCompatActivity {
         nextButton.setOnClickListener(view -> {
             showNextQuestion();
         });
-    }
-    private void setRadioButtonsBackground(RadioGroup radioGroup) {
-        for (int i = 0; i < radioGroup.getChildCount(); i++) {
-            View radioButton = radioGroup.getChildAt(i);
-            if (radioButton instanceof RadioButton) {
-                radioButton.setBackgroundResource(R.drawable.radio_button_background);
-            }
-        }
     }
     private void fetchQuestions() {
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -107,8 +106,6 @@ public class MainActivity3 extends AppCompatActivity {
         });
     }
     private void setQuestion(String questionKey) {
-
-
         cancelQuestionTimer();
 
         if (questionMap.containsKey(questionKey)) {
@@ -117,21 +114,27 @@ public class MainActivity3 extends AppCompatActivity {
             questionTextView.setText(questionKey);
             option1RadioGroup.clearCheck();
             option1RadioGroup.removeAllViews();
+
             for (int i = 1; i < choicesArray.length-1; i++) {
-                RadioButton radioButton = new RadioButton(this);
+                AppCompatRadioButton radioButton = (AppCompatRadioButton) getLayoutInflater().inflate(R.layout.custom_radio_button, option1RadioGroup, false);
 
                 if (i != 5) {
                     radioButton.setText(choicesArray[i]);
                     radioButton.setId(View.generateViewId());
                     option1RadioGroup.addView(radioButton);
-                    setRadioButtonsBackground(option1RadioGroup);
-
                 }
             }
+            String imageURL = choicesArray[choicesArray.length - 1];
+            ImageView imageView = findViewById(R.id.questionImageView4); // Replace imageView with the ID of your ImageView
+            Glide.with(this)
+                    .load(imageURL)
+//                    .placeholder(R.drawable.picture)
+
+                    .into(imageView);
+
             startTimer();
             nextButton.setBackgroundColor(0xFF808080);
             nextButton.setEnabled(false);
-
             // Assuming the correct option is at index 5 (choicesArray[5])
             String correctOption = choicesArray[5];
             option1RadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
@@ -153,14 +156,18 @@ public class MainActivity3 extends AppCompatActivity {
                     }
 
                     if (selectedOption.equals(correctOption)) {
-                        selectedRadioButton.setBackgroundResource(R.drawable.is);
+                        selectedRadioButton.setBackgroundColor(Color.parseColor("#80cf88"));
                         // User selected the correct answer, update the score
                         Log.d("DEBUG", "User selected the correct answer: " + selectedOption);
+                        selectedRadioButton.setTextColor(Color.WHITE);
+
                         Score++;
                     }
                     else {
-                        selectedRadioButton.setBackgroundResource(R.drawable.worng);
+                        selectedRadioButton.setBackgroundColor(Color.parseColor("#FA5959"));
                          Log.d("DEBUG", "User selected the wrong answer: " + selectedOption);
+                        selectedRadioButton.setTextColor(Color.WHITE);
+
                     }
                 }
                 else {

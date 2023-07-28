@@ -1,0 +1,75 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp">
+
+    <View
+        android:id="@+id/lineView"
+        android:layout_width="wrap_content"
+        android:layout_height="2dp"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/timeline2" />
+
+    <TextView
+        android:id="@+id/dotView1"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/timeline"
+        android:gravity="center"
+        android:text="01" />
+    <TextView
+        android:id="@+id/dotView2"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginEnd="60dp"
+        android:layout_marginBottom="18dp"
+        android:layout_toStartOf="@+id/dotView4"
+        android:background="@drawable/timeline"
+        android:gravity="center"
+        android:text="03" />
+
+    <TextView
+        android:id="@+id/dotView3"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginEnd="60dp"
+        android:layout_marginBottom="18dp"
+        android:layout_toStartOf="@+id/dotView2"
+        android:background="@drawable/timeline"
+        android:gravity="center"
+        android:text="02" />
+
+
+
+    <TextView
+        android:id="@+id/dotView4"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginEnd="60dp"
+        android:layout_marginBottom="18dp"
+        android:layout_toStartOf="@+id/dotView5"
+        android:background="@drawable/timeline"
+        android:gravity="center"
+        android:text="04" />
+
+    <TextView
+        android:id="@+id/dotView5"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignEnd="@+id/lineView"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/timeline"
+        android:gravity="center"
+        android:text="05" />
+
+    </RelativeLayout>
