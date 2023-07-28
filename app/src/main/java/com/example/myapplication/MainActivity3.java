@@ -93,6 +93,8 @@ public class MainActivity3 extends AppCompatActivity {
         nextButton.setOnClickListener(view -> {
             showNextQuestion();
         });
+
+//        timeline
         int numberOfQuestions = questionMap.size();
         for (int i = 0; i < dotViews.length; i++) {
             if (i < numberOfQuestions) {
