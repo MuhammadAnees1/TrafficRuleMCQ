@@ -46,7 +46,8 @@ public class MainActivity3 extends AppCompatActivity {
      private static final long COUNTDOWN_DURATION = 30000; // 30 seconds
      int Score = 0;
 
-    private TextView[] dotViews = new TextView[5];
+    private int maxNumberOfDots = 5; // Maximum number of dots on the timeline
+    private TextView[] dotViews = new TextView[maxNumberOfDots];
     private int currentQuestionIndex = 0;
 
     Map<String, String> questionMap = new HashMap<>();
@@ -60,6 +61,14 @@ public class MainActivity3 extends AppCompatActivity {
         dotViews[2] = findViewById(R.id.dotView3);
         dotViews[3] = findViewById(R.id.dotView4);
         dotViews[4] = findViewById(R.id.dotView5);
+
+        for (int i = 0; i < maxNumberOfDots; i++) {
+            dotViews[i].setTextColor(Color.parseColor("#000000"));
+            dotViews[i].setText(String.valueOf(i + 1));
+        }
+        // Set initial color for the first question number
+        dotViews[currentQuestionIndex % maxNumberOfDots].setTextColor(Color.parseColor("#FFFFFF"));
+
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -94,18 +103,6 @@ public class MainActivity3 extends AppCompatActivity {
             showNextQuestion();
         });
 
-//        timeline
-        int numberOfQuestions = questionMap.size();
-        for (int i = 0; i < dotViews.length; i++) {
-            if (i < numberOfQuestions) {
-                String questionKey = questionMap.keySet().toArray()[i].toString();
-                dotViews[i].setText(String.format(Locale.getDefault(), "%02d", i + 1));
-                dotViews[i].setVisibility(View.VISIBLE); // Set visibility to VISIBLE (in case it was set to GONE)
-            }
-        }
-
-        // Set initial color for the first question number
-        dotViews[currentQuestionIndex].setTextColor(Color.parseColor("#FFFFFF"));
     }
 
     private void fetchQuestions() {
@@ -210,7 +207,7 @@ public class MainActivity3 extends AppCompatActivity {
     }
     private void showNextQuestion() {
         // Remove color for the current question number
-        dotViews[currentQuestionIndex].setTextColor(Color.parseColor("#000000"));
+        dotViews[currentQuestionIndex % maxNumberOfDots].setTextColor(Color.parseColor("#000000"));
 
         if (currentQuestionIndex < questionMap.size() - 1) {
             currentQuestionIndex++;
@@ -220,8 +217,14 @@ public class MainActivity3 extends AppCompatActivity {
             showFinalScore();
         }
 
+        // Set text for the new group of question numbers on the dots
+        for (int i = 0; i < maxNumberOfDots; i++) {
+            int number = (currentQuestionIndex / maxNumberOfDots) * maxNumberOfDots + (i + 1);
+            dotViews[i].setText(String.valueOf(number));
+        }
+
         // Set color for the new current question number
-        dotViews[currentQuestionIndex].setTextColor(Color.parseColor("#FFFFFF"));
+        dotViews[currentQuestionIndex % maxNumberOfDots].setTextColor(Color.parseColor("#FFFFFF"));
     }
     private void startTimer() {
         countDownTimer = new CountDownTimer(COUNTDOWN_DURATION, 1000) {

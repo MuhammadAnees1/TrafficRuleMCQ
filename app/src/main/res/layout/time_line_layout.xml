@@ -31,10 +31,10 @@
         android:layout_marginTop="18dp"
         android:layout_marginEnd="60dp"
         android:layout_marginBottom="18dp"
-        android:layout_toStartOf="@+id/dotView4"
+        android:layout_toStartOf="@+id/dotView3"
         android:background="@drawable/timeline"
         android:gravity="center"
-        android:text="03" />
+        android:text="02" />
 
     <TextView
         android:id="@+id/dotView3"
@@ -43,10 +43,10 @@
         android:layout_marginTop="18dp"
         android:layout_marginEnd="60dp"
         android:layout_marginBottom="18dp"
-        android:layout_toStartOf="@+id/dotView2"
+        android:layout_toStartOf="@+id/dotView4"
         android:background="@drawable/timeline"
         android:gravity="center"
-        android:text="02" />
+        android:text="03" />
 
 
 
