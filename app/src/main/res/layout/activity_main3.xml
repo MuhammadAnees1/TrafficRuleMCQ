@@ -34,10 +34,7 @@
         android:text="00:00"
         tools:ignore="MissingConstraints" />
 
-
-
     </RelativeLayout>
-
         <TextView
             android:id="@+id/questionTextView1"
             android:layout_width="match_parent"
@@ -54,7 +51,7 @@
         android:id="@+id/questionImageView4"
         android:layout_width="match_parent"
         android:layout_height="180dp"
-        android:src="@drawable/picture"
+        android:src="@drawable/sign1"
         />
 
         <RadioGroup
@@ -76,7 +73,6 @@
         android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="35dp"
-        android:background="@drawable/button_background"
         android:text="Next"
         android:textColor="@color/white"
         android:textSize="20sp" />

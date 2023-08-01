@@ -1,10 +1,13 @@
 package com.example.myapplication;
 
+
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Parcelable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -31,31 +34,32 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 public class MainActivity3 extends AppCompatActivity {
-    private TextView questionTextView;
+     private TextView questionTextView;
      Button  nextButton;
      private int currentQuestionNumber = 0;
      private DatabaseReference databaseReference;
      private RadioGroup option1RadioGroup;
      private TextView timerTextView;
      private CountDownTimer countDownTimer;
-     private static final long COUNTDOWN_DURATION = 30000; // 30 seconds
+     private static final long COUNTDOWN_DURATION = 15000; // 30 seconds
      int Score = 0;
-
     private int maxNumberOfDots = 5; // Maximum number of dots on the timeline
     private TextView[] dotViews = new TextView[maxNumberOfDots];
     private int currentQuestionIndex = 0;
-
     Map<String, String> questionMap = new HashMap<>();
+    ArrayList<WrongAnswer> wrongAnswersList = new ArrayList<>();
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+            protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main3);
-
+// timeline
         dotViews[0] = findViewById(R.id.dotView1);
         dotViews[1] = findViewById(R.id.dotView2);
         dotViews[2] = findViewById(R.id.dotView3);
@@ -102,10 +106,8 @@ public class MainActivity3 extends AppCompatActivity {
         nextButton.setOnClickListener(view -> {
             showNextQuestion();
         });
-
     }
-
-    private void fetchQuestions() {
+            private void fetchQuestions() {
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -126,7 +128,7 @@ public class MainActivity3 extends AppCompatActivity {
             }
         });
     }
-    private void setQuestion(String questionKey) {
+            private void setQuestion(String questionKey) {
         cancelQuestionTimer();
 
         if (questionMap.containsKey(questionKey)) {
@@ -138,7 +140,6 @@ public class MainActivity3 extends AppCompatActivity {
 
             for (int i = 1; i < choicesArray.length-1; i++) {
                 AppCompatRadioButton radioButton = (AppCompatRadioButton) getLayoutInflater().inflate(R.layout.custom_radio_button, option1RadioGroup, false);
-
                 if (i != 5) {
                     radioButton.setText(choicesArray[i]);
                     radioButton.setId(View.generateViewId());
@@ -149,7 +150,7 @@ public class MainActivity3 extends AppCompatActivity {
             ImageView imageView = findViewById(R.id.questionImageView4);
             Glide.with(this)
                     .load(imageURL)
-//                    .placeholder(R.drawable.picture)
+//                    .placeholder(R.drawable.sign1)
                     .into(imageView);
 
             startTimer();
@@ -185,27 +186,48 @@ public class MainActivity3 extends AppCompatActivity {
                     }
                     else {
                         selectedRadioButton.setBackgroundColor(Color.parseColor("#FA5959"));
-                         Log.d("DEBUG", "User selected the wrong answer: " + selectedOption);
+                        Log.d("DEBUG", "User selected the wrong answer: " + selectedOption);
                         selectedRadioButton.setTextColor(Color.WHITE);
-
                     }
-                }
-                else {
 
-                    Log.d("DEBUG", "No option selected by the user.");
-                }
+                    if (!selectedOption.equals(correctOption)) {
+                        // User selected the wrong answer
+                        int wrongOptionIndex = -1;
+                        for (int i = 0; i < choicesArray.length; i++) {
+                            if (selectedOption.equals(choicesArray[i])) {
+                                wrongOptionIndex = i;
+                                break;
+                            }
+                        }
+
+                        if (wrongOptionIndex != -1) {
+                            // Create a new WrongAnswer object and add it to the list
+                            WrongAnswer wrongAnswer = new WrongAnswer(questionKey, choicesArray, wrongOptionIndex);
+                            wrongAnswersList.add(wrongAnswer);
+
+                        }
+                    }
+
+                    } else {
+
+                        Log.d("DEBUG", "No option selected by the user.");
+                    }
+
             });
         } else {
             Toast.makeText(MainActivity3.this, "Your text is not displaying.", Toast.LENGTH_SHORT).show();
         }
     }
-    private void onError(String errorMessage) {
+            private void onError(String errorMessage) {
         Log.e("ERROR", "Fetching questions failed: " + errorMessage);
     }
-     private void showFinalScore() {
-        Toast.makeText(MainActivity3.this, "Your score: " + Score, Toast.LENGTH_SHORT).show();
-    }
-    private void showNextQuestion() {
+            private void showFinalScore() {
+         Intent intent = new Intent(MainActivity3.this, WrongAnswersActivity.class);
+         intent.putParcelableArrayListExtra("wrongAnswersList", (ArrayList<? extends Parcelable>) wrongAnswersList);
+         startActivity(intent);
+
+     }
+            private void showNextQuestion() {
         // Remove color for the current question number
         dotViews[currentQuestionIndex % maxNumberOfDots].setTextColor(Color.parseColor("#000000"));
 
@@ -226,7 +248,7 @@ public class MainActivity3 extends AppCompatActivity {
         // Set color for the new current question number
         dotViews[currentQuestionIndex % maxNumberOfDots].setTextColor(Color.parseColor("#FFFFFF"));
     }
-    private void startTimer() {
+            private void startTimer() {
         countDownTimer = new CountDownTimer(COUNTDOWN_DURATION, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -241,13 +263,13 @@ public class MainActivity3 extends AppCompatActivity {
         }.start();
     }
     @Override
-    protected void onDestroy() {
+            protected void onDestroy() {
         super.onDestroy();
         if (countDownTimer != null) {
             countDownTimer.cancel();
         }
     }
-    private void cancelQuestionTimer() {
+            private void cancelQuestionTimer() {
         if (countDownTimer != null) {
             countDownTimer.cancel();
             countDownTimer = null;
