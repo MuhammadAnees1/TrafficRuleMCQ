@@ -39,7 +39,6 @@ import java.util.Map;
 public class MainActivity3 extends AppCompatActivity {
     private TextView questionTextView;
      Button  nextButton;
-
      private int currentQuestionNumber = 0;
      private DatabaseReference databaseReference;
      private RadioGroup option1RadioGroup;
@@ -52,9 +51,8 @@ public class MainActivity3 extends AppCompatActivity {
     private int currentQuestionIndex = 0;
     Map<String, String> questionMap = new HashMap<>();
     ArrayList<WrongAnswer> wrongAnswersList = new ArrayList<>();
-
     @Override
-            protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main3);
 // timeline
@@ -70,7 +68,6 @@ public class MainActivity3 extends AppCompatActivity {
         }
         // Set initial color for the first question number
         dotViews[currentQuestionIndex % maxNumberOfDots].setTextColor(Color.parseColor("#FFFFFF"));
-
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -88,7 +85,6 @@ public class MainActivity3 extends AppCompatActivity {
             actionBar.setTitle(spannableString);
         }
 
-
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
 
@@ -105,7 +101,8 @@ public class MainActivity3 extends AppCompatActivity {
             showNextQuestion();
         });
     }
-            private void fetchQuestions() {
+
+    private void fetchQuestions() {
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -126,7 +123,7 @@ public class MainActivity3 extends AppCompatActivity {
             }
         });
     }
-            private void setQuestion(String questionKey) {
+    private void setQuestion(String questionKey) {
         cancelQuestionTimer();
 
         if (questionMap.containsKey(questionKey)) {
@@ -146,16 +143,19 @@ public class MainActivity3 extends AppCompatActivity {
             }
             String imageURL = choicesArray[choicesArray.length - 1];
             ImageView imageView = findViewById(R.id.questionImageView4);
+
             Glide.with(this)
                     .load(imageURL)
 //                    .placeholder(R.drawable.sign1)
                     .into(imageView);
+            imageView.setVisibility(View.VISIBLE);
 
             startTimer();
             nextButton.setBackgroundColor(0xFF808080);
             nextButton.setEnabled(false);
             // Assuming the correct option is at index 5 (choicesArray[5])
             String correctOption = choicesArray[5];
+
             option1RadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
 
                 RadioButton selectedRadioButton = findViewById(checkedId);
@@ -173,13 +173,11 @@ public class MainActivity3 extends AppCompatActivity {
                     for (int i = 0; i < option1RadioGroup.getChildCount(); i++) {
                         option1RadioGroup.getChildAt(i).setEnabled(false);
                     }
-
                     if (selectedOption.equals(correctOption)) {
                         selectedRadioButton.setBackgroundColor(Color.parseColor("#80cf88"));
                         // User selected the correct answer, update the score
                         Log.d("DEBUG", "User selected the correct answer: " + selectedOption);
                         selectedRadioButton.setTextColor(Color.WHITE);
-
                         Score++;
                     }
                     else {
@@ -190,7 +188,6 @@ public class MainActivity3 extends AppCompatActivity {
                                 break;
                             }
                         }
-
                         if (wrongOptionIndex != -1) {
                             // Create a new WrongAnswer object and add it to the list
                             WrongAnswer wrongAnswer = new WrongAnswer(questionKey, choicesArray, wrongOptionIndex);
@@ -208,7 +205,6 @@ public class MainActivity3 extends AppCompatActivity {
 
                         Log.d("DEBUG", "No option selected by the user.");
                     }
-
             });
         } else {
             Toast.makeText(MainActivity3.this, "Your text is not displaying.", Toast.LENGTH_SHORT).show();
@@ -217,13 +213,12 @@ public class MainActivity3 extends AppCompatActivity {
             private void onError(String errorMessage) {
         Log.e("ERROR", "Fetching questions failed: " + errorMessage);
     }
-            private void showFinalScore() {
+    private void showFinalScore() {
          Intent intent = new Intent(MainActivity3.this, WrongAnswersActivity.class);
          intent.putParcelableArrayListExtra("wrongAnswersList", (ArrayList<? extends Parcelable>) wrongAnswersList);
          startActivity(intent);
-
      }
-            private void showNextQuestion() {
+     private void showNextQuestion() {
         // Remove color for the current question number
         dotViews[currentQuestionIndex % maxNumberOfDots].setTextColor(Color.parseColor("#000000"));
 
@@ -245,7 +240,7 @@ public class MainActivity3 extends AppCompatActivity {
         // Set color for the new current question number
         dotViews[currentQuestionIndex % maxNumberOfDots].setTextColor(Color.parseColor("#FFFFFF"));
     }
-            private void startTimer() {
+    private void startTimer() {
         countDownTimer = new CountDownTimer(COUNTDOWN_DURATION, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -260,13 +255,13 @@ public class MainActivity3 extends AppCompatActivity {
         }.start();
     }
     @Override
-            protected void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
         if (countDownTimer != null) {
             countDownTimer.cancel();
         }
     }
-            private void cancelQuestionTimer() {
+    private void cancelQuestionTimer() {
         if (countDownTimer != null) {
             countDownTimer.cancel();
             countDownTimer = null;

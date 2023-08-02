@@ -33,6 +33,8 @@ public class WrongAnswersActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+
             Drawable actionBarBackground = getResources().getDrawable(R.drawable.view_background);
             actionBar.setBackgroundDrawable(actionBarBackground);
             // Create a SpannableString to apply custom styles

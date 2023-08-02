@@ -12,59 +12,73 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/view_background">
-
-
-        <include
-            android:id="@+id/time_line"
-            layout="@layout/time_line_layout"/>
-
-        <TextView
-        android:id="@+id/timerTextView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:layout_below="@+id/time_line"
-        android:textColor="#FFFFFF"
-        android:layout_alignParentEnd="true"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-        android:text="00:00"
-        tools:ignore="MissingConstraints" />
-
-    </RelativeLayout>
-        <TextView
-            android:id="@+id/questionTextView1"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/question"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            tools:text="Question Text" />
-    <ImageView
-        android:id="@+id/questionImageView4"
-        android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:src="@drawable/sign1"
-        />
+            android:background="@drawable/view_background">
 
-        <RadioGroup
-            android:id="@+id/optionRadioGroup2"
-            style="@style/RadioButtonNoButtonStyle"
+            <include
+                android:id="@+id/time_line"
+                layout="@layout/time_line_layout" />
+
+            <TextView
+                android:id="@+id/timerTextView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:layout_below="@+id/time_line"
+                android:textColor="#FFFFFF"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="00:00"
+                tools:ignore="MissingConstraints" />
+
+        </RelativeLayout>
+
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:orientation="vertical"
-            tools:ignore="SpeakableTextPresentCheck">
+            android:layout_height="wrap_content">
 
-        </RadioGroup>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck">
+
+                <TextView
+                    android:id="@+id/questionTextView1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    tools:text="Question Text" />
+
+                <ImageView
+                    android:id="@+id/questionImageView4"
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:src="@drawable/sign1" />
+
+                <RadioGroup
+                    android:id="@+id/optionRadioGroup2"
+                    style="@style/RadioButtonNoButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:layout_margin="10dp"
+                    android:orientation="vertical"
+                    tools:ignore="SpeakableTextPresentCheck">
+
+                </RadioGroup>
+
+            </LinearLayout>
+
+        </ScrollView>
+
     </LinearLayout>
+
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/nextButton"
@@ -77,4 +91,5 @@
         android:text="Next"
         android:textColor="@color/white"
         android:textSize="20sp" />
+
 </RelativeLayout>
