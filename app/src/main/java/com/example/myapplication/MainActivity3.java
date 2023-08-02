@@ -20,11 +20,9 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatRadioButton;
-
 import com.bumptech.glide.Glide;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -33,22 +31,22 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 public class MainActivity3 extends AppCompatActivity {
-     private TextView questionTextView;
+    private TextView questionTextView;
      Button  nextButton;
+
      private int currentQuestionNumber = 0;
      private DatabaseReference databaseReference;
      private RadioGroup option1RadioGroup;
      private TextView timerTextView;
      private CountDownTimer countDownTimer;
      private static final long COUNTDOWN_DURATION = 15000; // 30 seconds
-     int Score = 0;
+    int Score = 0;
     private int maxNumberOfDots = 5; // Maximum number of dots on the timeline
     private TextView[] dotViews = new TextView[maxNumberOfDots];
     private int currentQuestionIndex = 0;
@@ -185,13 +183,6 @@ public class MainActivity3 extends AppCompatActivity {
                         Score++;
                     }
                     else {
-                        selectedRadioButton.setBackgroundColor(Color.parseColor("#FA5959"));
-                        Log.d("DEBUG", "User selected the wrong answer: " + selectedOption);
-                        selectedRadioButton.setTextColor(Color.WHITE);
-                    }
-
-                    if (!selectedOption.equals(correctOption)) {
-                        // User selected the wrong answer
                         int wrongOptionIndex = -1;
                         for (int i = 0; i < choicesArray.length; i++) {
                             if (selectedOption.equals(choicesArray[i])) {
@@ -205,10 +196,15 @@ public class MainActivity3 extends AppCompatActivity {
                             WrongAnswer wrongAnswer = new WrongAnswer(questionKey, choicesArray, wrongOptionIndex);
                             wrongAnswersList.add(wrongAnswer);
 
+                            selectedRadioButton = findViewById(checkedId);
+                            if (selectedRadioButton != null) {
+                                selectedRadioButton.setBackgroundColor(Color.parseColor("#FA5959"));
+                                selectedRadioButton.setTextColor(Color.WHITE);
+                            }
                         }
                     }
-
-                    } else {
+                }
+                else {
 
                         Log.d("DEBUG", "No option selected by the user.");
                     }
@@ -237,6 +233,7 @@ public class MainActivity3 extends AppCompatActivity {
             setQuestion(questionKey);
         } else {
             showFinalScore();
+            cancelQuestionTimer();
         }
 
         // Set text for the new group of question numbers on the dots

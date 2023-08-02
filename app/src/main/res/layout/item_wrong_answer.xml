@@ -11,7 +11,7 @@
 
 
         <TextView
-            android:id="@+id/questionTextView"
+            android:id="@+id/questionTextView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
@@ -20,13 +20,13 @@
             android:layout_marginBottom="8dp" />
 
         <RadioGroup
-            android:id="@+id/choicesRadioGroup"
+            android:id="@+id/choicesRadioGroup5"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
 
         <TextView
-            android:id="@+id/correctAnswerTextView"
+            android:id="@+id/correctAnswerTextView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="14sp"
