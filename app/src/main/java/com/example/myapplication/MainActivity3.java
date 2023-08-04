@@ -1,10 +1,21 @@
 package com.example.myapplication;
 
 
+import static com.example.myapplication.QuizDatabaseHelper.COLUMN_CHOICES;
+import static com.example.myapplication.QuizDatabaseHelper.COLUMN_CORRECT_ANSWER;
+import static com.example.myapplication.QuizDatabaseHelper.COLUMN_QUESTION;
+import static com.example.myapplication.QuizDatabaseHelper.TABLE_QUESTIONS;
+
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Parcelable;
@@ -20,10 +31,15 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatRadioButton;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -38,17 +54,18 @@ import java.util.Map;
 
 public class MainActivity3 extends AppCompatActivity {
     private TextView questionTextView;
-     Button  nextButton;
-     private int currentQuestionNumber = 0;
-     private DatabaseReference databaseReference;
-     private RadioGroup option1RadioGroup;
-     private TextView timerTextView;
-     private CountDownTimer countDownTimer;
-     private static final long COUNTDOWN_DURATION = 15000; // 30 seconds
+    Button  nextButton;
+    private int currentQuestionNumber = 0;
+    private DatabaseReference databaseReference;
+    private RadioGroup option1RadioGroup;
+    private TextView timerTextView;
+    private CountDownTimer countDownTimer;
+    private static final long COUNTDOWN_DURATION = 15000; // 30 seconds
     int Score = 0;
     private int maxNumberOfDots = 5; // Maximum number of dots on the timeline
     private TextView[] dotViews = new TextView[maxNumberOfDots];
     private int currentQuestionIndex = 0;
+
     Map<String, String> questionMap = new HashMap<>();
     ArrayList<WrongAnswer> wrongAnswersList = new ArrayList<>();
     @Override
@@ -71,6 +88,7 @@ public class MainActivity3 extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
+
             Drawable actionBarBackground = getResources().getDrawable(R.drawable.view_background);
             actionBar.setBackgroundDrawable(actionBarBackground);
             // Create a SpannableString to apply custom styles
@@ -103,33 +121,113 @@ public class MainActivity3 extends AppCompatActivity {
     }
 
     private void fetchQuestions() {
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot questionSnapshot : dataSnapshot.getChildren()) {
-                    String question = questionSnapshot.getKey();
-                    String choice = questionSnapshot.getValue().toString();
-                    questionMap.put(question, choice);
+        if (isConnectedToInternet()) {
+            // Fetch data from Firebase and save it to SQLite
+            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    QuizDatabaseHelper dbHelper = new QuizDatabaseHelper(MainActivity3.this);
+                    SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+                    // Clear the existing questions in the database before inserting new ones
+                    db.delete(QuizDatabaseHelper.TABLE_QUESTIONS, null, null);
+
+                    for (DataSnapshot questionSnapshot : dataSnapshot.getChildren()) {
+                        String question = questionSnapshot.getKey();
+                        String choice = questionSnapshot.getValue().toString();
+
+                        ContentValues values = new ContentValues();
+                        values.put(QuizDatabaseHelper.COLUMN_QUESTION, question);
+                        values.put(QuizDatabaseHelper.COLUMN_CHOICES, choice);
+                        long newRowId = db.insert(QuizDatabaseHelper.TABLE_QUESTIONS, null, values);
+                    }
+
+                    db.close();
+
+                    // Call the setQuestion method and pass the first question key
+                    questionMap.clear(); // Clear existing questions
+                    for (DataSnapshot questionSnapshot : dataSnapshot.getChildren()) {
+                        String question = questionSnapshot.getKey();
+                        String choice = questionSnapshot.getValue().toString();
+                        questionMap.put(question, choice); // Add questions to the questionMap
+                    }
+
+                    if (!questionMap.isEmpty()) {
+                        String firstQuestionKey = questionMap.keySet().iterator().next();
+                        setQuestion(firstQuestionKey);
+                    }
                 }
-                // Call the setQuestion method and pass the first question key
-                if (!questionMap.isEmpty()) {
-                    String firstQuestionKey = questionMap.keySet().iterator().next();
-                    setQuestion(firstQuestionKey);
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    onError(databaseError.getMessage());
                 }
+            });
+        } else {
+            // No internet connection, fetch data from SQLite
+            QuizDatabaseHelper dbHelper = new QuizDatabaseHelper(MainActivity3.this);
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+            String[] projection = {QuizDatabaseHelper.COLUMN_QUESTION, QuizDatabaseHelper.COLUMN_CHOICES};
+            Cursor cursor = db.query(
+                    QuizDatabaseHelper.TABLE_QUESTIONS,
+                    projection,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+            );
+
+            questionMap.clear(); // Clear existing questions
+            while (cursor.moveToNext()) {
+                String question = cursor.getString(cursor.getColumnIndexOrThrow(QuizDatabaseHelper.COLUMN_QUESTION));
+                String choices = cursor.getString(cursor.getColumnIndexOrThrow(QuizDatabaseHelper.COLUMN_CHOICES));
+                questionMap.put(question, choices); // Add questions to the questionMap
             }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                onError(databaseError.getMessage());
+
+            cursor.close();
+            db.close();
+
+            if (!questionMap.isEmpty()) {
+                String firstQuestionKey = questionMap.keySet().iterator().next();
+                setQuestion(firstQuestionKey);
             }
-        });
+        }
     }
+    private boolean isConnectedToInternet() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+    }
+
+    // Helper method to check if a question already exists in the database
     private void setQuestion(String questionKey) {
         cancelQuestionTimer();
 
-        if (questionMap.containsKey(questionKey)) {
-            String[] choicesArray = questionMap.get(questionKey).split(", ");
+        QuizDatabaseHelper dbHelper = new QuizDatabaseHelper(this);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-            questionTextView.setText(questionKey);
+        String[] projection = {QuizDatabaseHelper.COLUMN_QUESTION, QuizDatabaseHelper.COLUMN_CHOICES};
+        String selection = QuizDatabaseHelper.COLUMN_QUESTION + " = ?";
+        String[] selectionArgs = {questionKey};
+
+        Cursor cursor = db.query(
+                QuizDatabaseHelper.TABLE_QUESTIONS,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+        if (cursor.moveToFirst()) {
+            String question = cursor.getString(cursor.getColumnIndexOrThrow(QuizDatabaseHelper.COLUMN_QUESTION));
+            String choices = cursor.getString(cursor.getColumnIndexOrThrow(QuizDatabaseHelper.COLUMN_CHOICES));
+
+            String[] choicesArray = choices.split(", ");
+
+            questionTextView.setText(question);
             option1RadioGroup.clearCheck();
             option1RadioGroup.removeAllViews();
 
@@ -141,14 +239,35 @@ public class MainActivity3 extends AppCompatActivity {
                     option1RadioGroup.addView(radioButton);
                 }
             }
+
             String imageURL = choicesArray[choicesArray.length - 1];
             ImageView imageView = findViewById(R.id.questionImageView4);
 
             Glide.with(this)
                     .load(imageURL)
-//                    .placeholder(R.drawable.sign1)
-                    .into(imageView);
-            imageView.setVisibility(View.VISIBLE);
+//                    .error(R.drawable.placeholder_error) // Add an error placeholder drawable
+                    .into(new CustomTarget<Drawable>() {
+                        @Override
+                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                            // Image loaded successfully, set it to the ImageView and make it visible
+                            imageView.setImageDrawable(resource);
+                            imageView.setVisibility(View.VISIBLE);
+                        }
+
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+                            // This method is called when the resource is cleared
+                            // Set the ImageView visibility to GONE as there was an error loading the image
+                            imageView.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                            // Error loading the image, set the ImageView visibility to GONE
+                            imageView.setVisibility(View.GONE);
+                        }
+                    });
+
 
             startTimer();
             nextButton.setBackgroundColor(0xFF808080);
@@ -157,12 +276,9 @@ public class MainActivity3 extends AppCompatActivity {
             String correctOption = choicesArray[5];
 
             option1RadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
-
                 RadioButton selectedRadioButton = findViewById(checkedId);
                 if (selectedRadioButton != null) {
-
                     nextButton.setEnabled(true);
-
                     nextButton.setBackground(getResources().getDrawable(R.drawable.button_background));
 
                     String selectedOption = selectedRadioButton.getText().toString();
@@ -173,14 +289,14 @@ public class MainActivity3 extends AppCompatActivity {
                     for (int i = 0; i < option1RadioGroup.getChildCount(); i++) {
                         option1RadioGroup.getChildAt(i).setEnabled(false);
                     }
+
                     if (selectedOption.equals(correctOption)) {
                         selectedRadioButton.setBackgroundColor(Color.parseColor("#80cf88"));
                         // User selected the correct answer, update the score
                         Log.d("DEBUG", "User selected the correct answer: " + selectedOption);
                         selectedRadioButton.setTextColor(Color.WHITE);
                         Score++;
-                    }
-                    else {
+                    } else {
                         int wrongOptionIndex = -1;
                         for (int i = 0; i < choicesArray.length; i++) {
                             if (selectedOption.equals(choicesArray[i])) {
@@ -200,25 +316,27 @@ public class MainActivity3 extends AppCompatActivity {
                             }
                         }
                     }
+                } else {
+                    Log.d("DEBUG", "No option selected by the user.");
                 }
-                else {
-
-                        Log.d("DEBUG", "No option selected by the user.");
-                    }
             });
         } else {
             Toast.makeText(MainActivity3.this, "Your text is not displaying.", Toast.LENGTH_SHORT).show();
         }
+
+        cursor.close();
+        db.close();
     }
-            private void onError(String errorMessage) {
+    private void onError(String errorMessage) {
         Log.e("ERROR", "Fetching questions failed: " + errorMessage);
     }
     private void showFinalScore() {
-         Intent intent = new Intent(MainActivity3.this, WrongAnswersActivity.class);
-         intent.putParcelableArrayListExtra("wrongAnswersList", (ArrayList<? extends Parcelable>) wrongAnswersList);
-         startActivity(intent);
-     }
-     private void showNextQuestion() {
+        Intent intent = new Intent(MainActivity3.this, WrongAnswersActivity.class);
+        Toast.makeText(this, "score"+Score, Toast.LENGTH_SHORT).show();
+        intent.putParcelableArrayListExtra("wrongAnswersList", (ArrayList<? extends Parcelable>) wrongAnswersList);
+        startActivity(intent);
+    }
+    private void showNextQuestion() {
         // Remove color for the current question number
         dotViews[currentQuestionIndex % maxNumberOfDots].setTextColor(Color.parseColor("#000000"));
 

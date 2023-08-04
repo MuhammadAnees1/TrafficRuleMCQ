@@ -79,7 +79,6 @@ public class WrongAnswersActivity extends AppCompatActivity {
                 if (wrongOptionIndex >= 0 && wrongOptionIndex < choicesRadioGroup.getChildCount()) {
                     choicesRadioGroup.check(choicesRadioGroup.getChildAt(wrongOptionIndex).getId());
                 }
-
                 String correctAnswer = choices[5];
                 correctAnswerTextView.setText("Correct Answer: " + correctAnswer);
                 containerLayout.addView(itemView);

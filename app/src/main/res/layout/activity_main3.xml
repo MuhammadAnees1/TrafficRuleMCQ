@@ -10,6 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@id/nextButton"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -44,7 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck">
+                tools:ignore="SpeakableTextPresentCheck">
 
                 <TextView
                     android:id="@+id/questionTextView1"
@@ -60,7 +61,7 @@
                     android:id="@+id/questionImageView4"
                     android:layout_width="match_parent"
                     android:layout_height="180dp"
-                    android:src="@drawable/sign1" />
+                    />
 
                 <RadioGroup
                     android:id="@+id/optionRadioGroup2"
@@ -87,7 +88,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp"
-        android:layout_marginBottom="35dp"
+        android:layout_marginBottom="20dp"
         android:text="Next"
         android:textColor="@color/white"
         android:textSize="20sp" />
