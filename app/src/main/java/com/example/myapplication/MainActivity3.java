@@ -61,7 +61,7 @@ public class MainActivity3 extends AppCompatActivity {
     private TextView timerTextView;
     private CountDownTimer countDownTimer;
     private static final long COUNTDOWN_DURATION = 15000; // 30 seconds
-    int Score = 0;
+    static int Score = 0;
     private int maxNumberOfDots = 5; // Maximum number of dots on the timeline
     private TextView[] dotViews = new TextView[maxNumberOfDots];
     private int currentQuestionIndex = 0;
@@ -232,7 +232,11 @@ public class MainActivity3 extends AppCompatActivity {
             option1RadioGroup.removeAllViews();
 
             for (int i = 1; i < choicesArray.length-1; i++) {
+
+                
                 AppCompatRadioButton radioButton = (AppCompatRadioButton) getLayoutInflater().inflate(R.layout.custom_radio_button, option1RadioGroup, false);
+                radioButton.setBackgroundResource(R.drawable.button_background);
+
                 if (i != 5) {
                     radioButton.setText(choicesArray[i]);
                     radioButton.setId(View.generateViewId());
@@ -268,7 +272,6 @@ public class MainActivity3 extends AppCompatActivity {
                         }
                     });
 
-
             startTimer();
             nextButton.setBackgroundColor(0xFF808080);
             nextButton.setEnabled(false);
@@ -296,25 +299,13 @@ public class MainActivity3 extends AppCompatActivity {
                         Log.d("DEBUG", "User selected the correct answer: " + selectedOption);
                         selectedRadioButton.setTextColor(Color.WHITE);
                         Score++;
-                    } else {
-                        int wrongOptionIndex = -1;
-                        for (int i = 0; i < choicesArray.length; i++) {
-                            if (selectedOption.equals(choicesArray[i])) {
-                                wrongOptionIndex = i;
-                                break;
-                            }
-                        }
-                        if (wrongOptionIndex != -1) {
-                            // Create a new WrongAnswer object and add it to the list
-                            WrongAnswer wrongAnswer = new WrongAnswer(questionKey, choicesArray, wrongOptionIndex);
-                            wrongAnswersList.add(wrongAnswer);
+                    }
 
-                            selectedRadioButton = findViewById(checkedId);
-                            if (selectedRadioButton != null) {
-                                selectedRadioButton.setBackgroundColor(Color.parseColor("#FA5959"));
-                                selectedRadioButton.setTextColor(Color.WHITE);
-                            }
-                        }
+                    else {
+                        handleTimeUp();
+                        selectedRadioButton.setBackgroundColor(Color.parseColor("#FA5959"));
+                        selectedRadioButton.setTextColor(Color.WHITE);
+
                     }
                 } else {
                     Log.d("DEBUG", "No option selected by the user.");
@@ -332,10 +323,11 @@ public class MainActivity3 extends AppCompatActivity {
     }
     private void showFinalScore() {
         Intent intent = new Intent(MainActivity3.this, WrongAnswersActivity.class);
-        Toast.makeText(this, "score"+Score, Toast.LENGTH_SHORT).show();
-        intent.putParcelableArrayListExtra("wrongAnswersList", (ArrayList<? extends Parcelable>) wrongAnswersList);
+        intent.putExtra("scoreKey", Score); // Use the key "scoreKey" and the Score variable
+        intent.putParcelableArrayListExtra("wrongAnswersList", wrongAnswersList);
         startActivity(intent);
     }
+
     private void showNextQuestion() {
         // Remove color for the current question number
         dotViews[currentQuestionIndex % maxNumberOfDots].setTextColor(Color.parseColor("#000000"));
@@ -367,12 +359,38 @@ public class MainActivity3 extends AppCompatActivity {
                 timerTextView.setText(timeFormatted);
             }
             public void onFinish() {
-                // Timer finished, show the next question
+                handleTimeUp();
                 showNextQuestion();
             }
         }.start();
     }
-    @Override
+    private void handleTimeUp() {
+        cancelQuestionTimer();
+
+        String currentQuestionKey = questionMap.keySet().toArray()[currentQuestionIndex].toString();
+
+        // Assuming the correct option is at index 5 (choicesArray[5])
+        String[] choicesArray = questionMap.get(currentQuestionKey).split(", ");
+        String correctOption = choicesArray[5];
+
+        // Check if the correct option is already selected by the user
+        if (option1RadioGroup.getCheckedRadioButtonId() == -1) {
+            // No option selected by the user within the time limit (time ran out)
+            // Create a new WrongAnswer object and add it to the list
+            int correctOptionIndex = -1;
+            for (int i = 0; i < choicesArray.length; i++) {
+                if (correctOption.equals(choicesArray[i])) {
+                    correctOptionIndex = i;
+                    break;
+                }
+            }
+            if (correctOptionIndex != -1) {
+                WrongAnswer wrongAnswer = new WrongAnswer(currentQuestionKey, choicesArray, correctOptionIndex);
+                wrongAnswersList.add(wrongAnswer);
+            }
+        }
+    }
+        @Override
     protected void onDestroy() {
         super.onDestroy();
         if (countDownTimer != null) {

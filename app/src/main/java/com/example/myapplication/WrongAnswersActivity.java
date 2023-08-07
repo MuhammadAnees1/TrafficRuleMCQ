@@ -22,14 +22,18 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatRadioButton;
 
+import com.google.android.material.color.utilities.Score;
+
 import java.util.ArrayList;
 
 public class WrongAnswersActivity extends AppCompatActivity {
+     TextView scoreTextView; // Add this line
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wrong_answers);
+        scoreTextView = findViewById(R.id.ScoreTextView);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -48,6 +52,9 @@ public class WrongAnswersActivity extends AppCompatActivity {
             // Set the styled SpannableString as the title
             actionBar.setTitle(spannableString);
         }
+
+        int scoreValue = getIntent().getIntExtra("scoreKey", 0);
+        scoreTextView.setText("Score: " + scoreValue);
 
         ArrayList<WrongAnswer> wrongAnswersList = getIntent().getParcelableArrayListExtra("wrongAnswersList");
 

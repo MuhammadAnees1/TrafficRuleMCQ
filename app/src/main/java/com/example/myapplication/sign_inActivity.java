@@ -5,12 +5,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -41,7 +39,7 @@ public class sign_inActivity extends AppCompatActivity {
 
         // Initialize sign in options the client-id is copied form google-services.json file
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken("805559888984-klbo04dai5o5g714ot4qp9h16k281rtb.apps.googleusercontent.com")
+            .requestIdToken("805559888984-hn4ic6chbmib0q8v4sdjmdinv573ghds.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
 
