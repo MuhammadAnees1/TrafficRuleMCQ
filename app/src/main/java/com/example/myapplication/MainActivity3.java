@@ -18,6 +18,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -27,6 +28,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -55,7 +57,6 @@ import java.util.Map;
 public class MainActivity3 extends AppCompatActivity {
     private TextView questionTextView;
     Button  nextButton;
-    private int currentQuestionNumber = 0;
     private DatabaseReference databaseReference;
     private RadioGroup option1RadioGroup;
     private TextView timerTextView;
@@ -65,13 +66,16 @@ public class MainActivity3 extends AppCompatActivity {
     private int maxNumberOfDots = 5; // Maximum number of dots on the timeline
     private TextView[] dotViews = new TextView[maxNumberOfDots];
     private int currentQuestionIndex = 0;
-
+    ProgressBar progressBar;
     Map<String, String> questionMap = new HashMap<>();
     ArrayList<WrongAnswer> wrongAnswersList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main3);
+
+        progressBar = findViewById(R.id.progressBar);
+        Score = 0;
 // timeline
         dotViews[0] = findViewById(R.id.dotView1);
         dotViews[1] = findViewById(R.id.dotView2);
@@ -96,13 +100,11 @@ public class MainActivity3 extends AppCompatActivity {
             // Apply color to the title text
             int titleColor = Color.parseColor("#FFFFFFFF");
             spannableString.setSpan(new ForegroundColorSpan(titleColor), 0, spannableString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
             // You can apply other styles as well if needed, for example, bold the text
             spannableString.setSpan(new StyleSpan(Typeface.NORMAL), 0, spannableString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             // Set the styled SpannableString as the title
             actionBar.setTitle(spannableString);
         }
-
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
 
@@ -121,11 +123,29 @@ public class MainActivity3 extends AppCompatActivity {
     }
 
     private void fetchQuestions() {
+        progressBar.setVisibility(View.VISIBLE); // Show the ProgressBar before fetching questions
+
+        // Set a timeout duration in milliseconds
+        final int TIMEOUT_DURATION = 10000; // For example, 10 seconds
+
+        // Start a delayed Runnable to handle timeout
+        Handler timeoutHandler = new Handler();
+        timeoutHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                progressBar.setVisibility(View.GONE);
+                // Handle timeout, show an error message, or take appropriate action
+                // For example: onError("Request timed out");
+                Toast.makeText(MainActivity3.this, "Request timed out", Toast.LENGTH_SHORT).show();
+            }
+        }, TIMEOUT_DURATION);
         if (isConnectedToInternet()) {
             // Fetch data from Firebase and save it to SQLite
             databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+                    timeoutHandler.removeCallbacksAndMessages(null); // Cancel the timeout
+
                     QuizDatabaseHelper dbHelper = new QuizDatabaseHelper(MainActivity3.this);
                     SQLiteDatabase db = dbHelper.getWritableDatabase();
 
@@ -156,13 +176,18 @@ public class MainActivity3 extends AppCompatActivity {
                         String firstQuestionKey = questionMap.keySet().iterator().next();
                         setQuestion(firstQuestionKey);
                     }
+                    progressBar.setVisibility(View.GONE); // Hide the ProgressBar
+
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
+                    timeoutHandler.removeCallbacksAndMessages(null); // Cancel the timeout
+                    progressBar.setVisibility(View.GONE);
                     onError(databaseError.getMessage());
                 }
             });
+            progressBar.setVisibility(View.GONE); // Hide the ProgressBar
         } else {
             // No internet connection, fetch data from SQLite
             QuizDatabaseHelper dbHelper = new QuizDatabaseHelper(MainActivity3.this);
@@ -194,6 +219,7 @@ public class MainActivity3 extends AppCompatActivity {
                 setQuestion(firstQuestionKey);
             }
         }
+        progressBar.setVisibility(View.GONE); // Hide the ProgressBar
     }
     private boolean isConnectedToInternet() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -232,10 +258,7 @@ public class MainActivity3 extends AppCompatActivity {
             option1RadioGroup.removeAllViews();
 
             for (int i = 1; i < choicesArray.length-1; i++) {
-
-                
                 AppCompatRadioButton radioButton = (AppCompatRadioButton) getLayoutInflater().inflate(R.layout.custom_radio_button, option1RadioGroup, false);
-                radioButton.setBackgroundResource(R.drawable.button_background);
 
                 if (i != 5) {
                     radioButton.setText(choicesArray[i]);
@@ -279,6 +302,8 @@ public class MainActivity3 extends AppCompatActivity {
             String correctOption = choicesArray[5];
 
             option1RadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+
+
                 RadioButton selectedRadioButton = findViewById(checkedId);
                 if (selectedRadioButton != null) {
                     nextButton.setEnabled(true);
@@ -292,20 +317,31 @@ public class MainActivity3 extends AppCompatActivity {
                     for (int i = 0; i < option1RadioGroup.getChildCount(); i++) {
                         option1RadioGroup.getChildAt(i).setEnabled(false);
                     }
-
+                    option1RadioGroup.clearCheck();
                     if (selectedOption.equals(correctOption)) {
                         selectedRadioButton.setBackgroundColor(Color.parseColor("#80cf88"));
                         // User selected the correct answer, update the score
                         Log.d("DEBUG", "User selected the correct answer: " + selectedOption);
                         selectedRadioButton.setTextColor(Color.WHITE);
+
                         Score++;
-                    }
-
-                    else {
-                        handleTimeUp();
-                        selectedRadioButton.setBackgroundColor(Color.parseColor("#FA5959"));
-                        selectedRadioButton.setTextColor(Color.WHITE);
-
+                    } else {
+                        int wrongOptionIndex = -1;
+                        for (int i = 0; i < choicesArray.length; i++) {
+                            if (selectedOption.equals(choicesArray[i])) {
+                                wrongOptionIndex = i;
+                                break;
+                            }}
+                        if (wrongOptionIndex != -1) {
+                            // Create a new WrongAnswer object and add it to the list
+                            WrongAnswer wrongAnswer = new WrongAnswer(questionKey, choicesArray, wrongOptionIndex);
+                            wrongAnswersList.add(wrongAnswer);
+                            selectedRadioButton = findViewById(checkedId);
+                            if (selectedRadioButton != null) {
+                                selectedRadioButton.setBackgroundColor(Color.parseColor("#FA5959"));
+                                selectedRadioButton.setTextColor(Color.WHITE);
+                            }
+                        }
                     }
                 } else {
                     Log.d("DEBUG", "No option selected by the user.");
@@ -323,7 +359,7 @@ public class MainActivity3 extends AppCompatActivity {
     }
     private void showFinalScore() {
         Intent intent = new Intent(MainActivity3.this, WrongAnswersActivity.class);
-        intent.putExtra("scoreKey", Score); // Use the key "scoreKey" and the Score variable
+        intent.putExtra("scoreKey", Score);
         intent.putParcelableArrayListExtra("wrongAnswersList", wrongAnswersList);
         startActivity(intent);
     }
@@ -350,6 +386,7 @@ public class MainActivity3 extends AppCompatActivity {
         // Set color for the new current question number
         dotViews[currentQuestionIndex % maxNumberOfDots].setTextColor(Color.parseColor("#FFFFFF"));
     }
+    // Modify the startTimer() method as follows:
     private void startTimer() {
         countDownTimer = new CountDownTimer(COUNTDOWN_DURATION, 1000) {
             @Override
@@ -360,13 +397,11 @@ public class MainActivity3 extends AppCompatActivity {
             }
             public void onFinish() {
                 handleTimeUp();
-                showNextQuestion();
             }
         }.start();
     }
     private void handleTimeUp() {
-        cancelQuestionTimer();
-
+        cancelQuestionTimer(); // Cancel the timer early
         String currentQuestionKey = questionMap.keySet().toArray()[currentQuestionIndex].toString();
 
         // Assuming the correct option is at index 5 (choicesArray[5])
@@ -389,8 +424,11 @@ public class MainActivity3 extends AppCompatActivity {
                 wrongAnswersList.add(wrongAnswer);
             }
         }
+
+        // Move to the next question
+        showNextQuestion();
     }
-        @Override
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         if (countDownTimer != null) {

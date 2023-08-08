@@ -14,20 +14,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatRadioButton;
-
 import com.google.android.material.color.utilities.Score;
 
 import java.util.ArrayList;
-
 public class WrongAnswersActivity extends AppCompatActivity {
-     TextView scoreTextView; // Add this line
+    TextView scoreTextView; // Add this line
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +37,6 @@ public class WrongAnswersActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-
             Drawable actionBarBackground = getResources().getDrawable(R.drawable.view_background);
             actionBar.setBackgroundDrawable(actionBarBackground);
             // Create a SpannableString to apply custom styles
@@ -52,8 +50,9 @@ public class WrongAnswersActivity extends AppCompatActivity {
             // Set the styled SpannableString as the title
             actionBar.setTitle(spannableString);
         }
-
         int scoreValue = getIntent().getIntExtra("scoreKey", 0);
+        TextView scoreTextView = findViewById(R.id.ScoreTextView);
+
         scoreTextView.setText("Score: " + scoreValue);
 
         ArrayList<WrongAnswer> wrongAnswersList = getIntent().getParcelableArrayListExtra("wrongAnswersList");
@@ -76,12 +75,12 @@ public class WrongAnswersActivity extends AppCompatActivity {
 
                 String[] choices = wrongAnswer.getChoices();
                 for (int i = 1; i <= 4; i++) {
-                    AppCompatRadioButton radioButton = (AppCompatRadioButton) inflater.inflate(R.layout.custom_radio_button, choicesRadioGroup, false);
+                    RadioButton radioButton = (AppCompatRadioButton) inflater.inflate(R.layout.custom_radio_button, choicesRadioGroup, false);
+
                     radioButton.setText(choices[i]);
                     radioButton.setEnabled(false);
                     choicesRadioGroup.addView(radioButton);
                 }
-
                 int wrongOptionIndex = wrongAnswer.getWrongOptionIndex();
                 if (wrongOptionIndex >= 0 && wrongOptionIndex < choicesRadioGroup.getChildCount()) {
                     choicesRadioGroup.check(choicesRadioGroup.getChildAt(wrongOptionIndex).getId());
@@ -96,7 +95,6 @@ public class WrongAnswersActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
-
         Button finishButton = findViewById(R.id.finishButton);
         finishButton.setOnClickListener(view -> {
             finish();
