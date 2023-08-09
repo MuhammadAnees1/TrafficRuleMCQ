@@ -13,6 +13,7 @@
         android:layout_above="@id/nextButton"
         android:orientation="vertical">
 
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -41,49 +42,60 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <View
+                android:id="@+id/blurOverlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                android:background="#88000000" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 tools:ignore="SpeakableTextPresentCheck">
 
-                <ProgressBar
-                    android:id="@+id/progressBar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
 
-
-                <TextView
-                    android:id="@+id/questionTextView1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="20dp"
-                    android:textColor="@color/black"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    tools:text="Question Text" />
+                    <TextView
+                        android:id="@+id/questionTextView1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="20dp"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        tools:text="Question Text" />
 
                 <ImageView
-                    android:id="@+id/questionImageView4"
-                    android:layout_width="match_parent"
-                    android:layout_height="180dp"
-                    />
+                        android:id="@+id/questionImageView4"
+                        android:layout_width="match_parent"
+                        android:layout_height="180dp" />
 
-                <RadioGroup
-                    android:id="@+id/optionRadioGroup2"
-                    style="@style/RadioButtonNoButtonStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:layout_margin="10dp"
-                    android:orientation="vertical"
-                    tools:ignore="SpeakableTextPresentCheck">
 
-                </RadioGroup>
+                    <ProgressBar
+                        android:id="@+id/progressBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center" />
 
+                    <RadioGroup
+                        android:id="@+id/optionRadioGroup2"
+                        style="@style/RadioButtonNoButtonStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:layout_margin="10dp"
+                        android:orientation="vertical"
+                        tools:ignore="SpeakableTextPresentCheck">
+
+                    </RadioGroup>
             </LinearLayout>
-
+        </FrameLayout>
         </ScrollView>
-
     </LinearLayout>
 
 

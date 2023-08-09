@@ -27,6 +27,7 @@ import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
@@ -67,6 +68,8 @@ public class MainActivity3 extends AppCompatActivity {
     private TextView[] dotViews = new TextView[maxNumberOfDots];
     private int currentQuestionIndex = 0;
     ProgressBar progressBar;
+
+    View blurOverlay;
     Map<String, String> questionMap = new HashMap<>();
     ArrayList<WrongAnswer> wrongAnswersList = new ArrayList<>();
     @Override
@@ -75,6 +78,9 @@ public class MainActivity3 extends AppCompatActivity {
         setContentView(R.layout.activity_main3);
 
         progressBar = findViewById(R.id.progressBar);
+        blurOverlay = findViewById(R.id.blurOverlay);
+        blurOverlay.setVisibility(View.VISIBLE);// Show the ProgressBar before fetching questions
+        progressBar.setVisibility(View.VISIBLE); // Show the ProgressBar before fetching questions
         Score = 0;
 // timeline
         dotViews[0] = findViewById(R.id.dotView1);
@@ -112,10 +118,11 @@ public class MainActivity3 extends AppCompatActivity {
         option1RadioGroup = findViewById(R.id.optionRadioGroup2);
         timerTextView = findViewById(R.id.timerTextView1);
         nextButton = findViewById(R.id.nextButton);
-
+        nextButton.setEnabled(false);
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("Questions");
         fetchQuestions();
+
 
         nextButton.setOnClickListener(view -> {
             showNextQuestion();
@@ -123,103 +130,96 @@ public class MainActivity3 extends AppCompatActivity {
     }
 
     private void fetchQuestions() {
-        progressBar.setVisibility(View.VISIBLE); // Show the ProgressBar before fetching questions
+        progressBar.setVisibility(View.VISIBLE);
+        blurOverlay.setVisibility(View.VISIBLE);
 
-        // Set a timeout duration in milliseconds
-        final int TIMEOUT_DURATION = 10000; // For example, 10 seconds
+        // Start a timer for 10 seconds
+            // Timer finished, check if data is fetched from Firebase
+                if (isConnectedToInternet()) {
+                    databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            updateDatabaseFromFirebase(dataSnapshot);
+                            loadQuestionsFromDatabase();
+                        }
 
-        // Start a delayed Runnable to handle timeout
-        Handler timeoutHandler = new Handler();
-        timeoutHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                progressBar.setVisibility(View.GONE);
-                // Handle timeout, show an error message, or take appropriate action
-                // For example: onError("Request timed out");
-                Toast.makeText(MainActivity3.this, "Request timed out", Toast.LENGTH_SHORT).show();
-            }
-        }, TIMEOUT_DURATION);
-        if (isConnectedToInternet()) {
-            // Fetch data from Firebase and save it to SQLite
-            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    timeoutHandler.removeCallbacksAndMessages(null); // Cancel the timeout
-
-                    QuizDatabaseHelper dbHelper = new QuizDatabaseHelper(MainActivity3.this);
-                    SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-                    // Clear the existing questions in the database before inserting new ones
-                    db.delete(QuizDatabaseHelper.TABLE_QUESTIONS, null, null);
-
-                    for (DataSnapshot questionSnapshot : dataSnapshot.getChildren()) {
-                        String question = questionSnapshot.getKey();
-                        String choice = questionSnapshot.getValue().toString();
-
-                        ContentValues values = new ContentValues();
-                        values.put(QuizDatabaseHelper.COLUMN_QUESTION, question);
-                        values.put(QuizDatabaseHelper.COLUMN_CHOICES, choice);
-                        long newRowId = db.insert(QuizDatabaseHelper.TABLE_QUESTIONS, null, values);
-                    }
-
-                    db.close();
-
-                    // Call the setQuestion method and pass the first question key
-                    questionMap.clear(); // Clear existing questions
-                    for (DataSnapshot questionSnapshot : dataSnapshot.getChildren()) {
-                        String question = questionSnapshot.getKey();
-                        String choice = questionSnapshot.getValue().toString();
-                        questionMap.put(question, choice); // Add questions to the questionMap
-                    }
-
-                    if (!questionMap.isEmpty()) {
-                        String firstQuestionKey = questionMap.keySet().iterator().next();
-                        setQuestion(firstQuestionKey);
-                    }
-                    progressBar.setVisibility(View.GONE); // Hide the ProgressBar
-
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            onError(databaseError.getMessage());
+                            loadQuestionsFromDatabase();
+                        }
+                    });
+                } else {
+                    loadQuestionsFromDatabase();
                 }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    timeoutHandler.removeCallbacksAndMessages(null); // Cancel the timeout
-                    progressBar.setVisibility(View.GONE);
-                    onError(databaseError.getMessage());
-                }
-            });
-            progressBar.setVisibility(View.GONE); // Hide the ProgressBar
-        } else {
-            // No internet connection, fetch data from SQLite
-            QuizDatabaseHelper dbHelper = new QuizDatabaseHelper(MainActivity3.this);
-            SQLiteDatabase db = dbHelper.getReadableDatabase();
+    }
 
-            String[] projection = {QuizDatabaseHelper.COLUMN_QUESTION, QuizDatabaseHelper.COLUMN_CHOICES};
-            Cursor cursor = db.query(
-                    QuizDatabaseHelper.TABLE_QUESTIONS,
-                    projection,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null
-            );
+    private void updateDatabaseFromFirebase(DataSnapshot dataSnapshot) {
+        QuizDatabaseHelper dbHelper = new QuizDatabaseHelper(MainActivity3.this);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-            questionMap.clear(); // Clear existing questions
-            while (cursor.moveToNext()) {
-                String question = cursor.getString(cursor.getColumnIndexOrThrow(QuizDatabaseHelper.COLUMN_QUESTION));
-                String choices = cursor.getString(cursor.getColumnIndexOrThrow(QuizDatabaseHelper.COLUMN_CHOICES));
-                questionMap.put(question, choices); // Add questions to the questionMap
-            }
+        db.delete(QuizDatabaseHelper.TABLE_QUESTIONS, null, null);
 
-            cursor.close();
-            db.close();
+        for (DataSnapshot questionSnapshot : dataSnapshot.getChildren()) {
+            String question = questionSnapshot.getKey();
+            String choice = questionSnapshot.getValue().toString();
 
-            if (!questionMap.isEmpty()) {
-                String firstQuestionKey = questionMap.keySet().iterator().next();
-                setQuestion(firstQuestionKey);
-            }
+            ContentValues values = new ContentValues();
+            values.put(QuizDatabaseHelper.COLUMN_QUESTION, question);
+            values.put(QuizDatabaseHelper.COLUMN_CHOICES, choice);
+            long newRowId = db.insert(QuizDatabaseHelper.TABLE_QUESTIONS, null, values);
         }
-        progressBar.setVisibility(View.GONE); // Hide the ProgressBar
+
+        db.close();
+    }
+
+    private void loadQuestionsFromDatabase() {
+        QuizDatabaseHelper dbHelper = new QuizDatabaseHelper(MainActivity3.this);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String[] projection = {QuizDatabaseHelper.COLUMN_QUESTION, QuizDatabaseHelper.COLUMN_CHOICES};
+        Cursor cursor = db.query(
+                QuizDatabaseHelper.TABLE_QUESTIONS,
+                projection,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        questionMap.clear();
+        while (cursor.moveToNext()) {
+            String question = cursor.getString(cursor.getColumnIndexOrThrow(QuizDatabaseHelper.COLUMN_QUESTION));
+            String choices = cursor.getString(cursor.getColumnIndexOrThrow(QuizDatabaseHelper.COLUMN_CHOICES));
+            questionMap.put(question, choices);
+        }
+        cursor.close();
+        db.close();
+
+        if (!questionMap.isEmpty()) {
+            String firstQuestionKey = questionMap.keySet().iterator().next();
+            setQuestion(firstQuestionKey);
+        } else {
+            // If there's no data in SQLite, and the timer has finished, show the error message
+            new CountDownTimer(10000, 1000) {
+                public void onTick(long millisUntilFinished) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    blurOverlay.setVisibility(View.VISIBLE);
+                    // Timer is ticking every second
+                }
+
+                public void onFinish() {
+                    progressBar.setVisibility(View.GONE);
+                    blurOverlay.setVisibility(View.GONE);
+                    Toast.makeText(MainActivity3.this, "NO internet Connection && data in Database", Toast.LENGTH_SHORT).show();
+                }
+            }.start();
+        }
+
+        progressBar.setVisibility(View.GONE);
+        blurOverlay.setVisibility(View.GONE);
     }
     private boolean isConnectedToInternet() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -286,12 +286,14 @@ public class MainActivity3 extends AppCompatActivity {
                             // This method is called when the resource is cleared
                             // Set the ImageView visibility to GONE as there was an error loading the image
                             imageView.setVisibility(View.GONE);
+
                         }
 
                         @Override
                         public void onLoadFailed(@Nullable Drawable errorDrawable) {
                             // Error loading the image, set the ImageView visibility to GONE
                             imageView.setVisibility(View.GONE);
+                            progressBar.setVisibility(View.GONE);// Show the ProgressBar before fetching questions
                         }
                     });
 
@@ -365,6 +367,7 @@ public class MainActivity3 extends AppCompatActivity {
     }
 
     private void showNextQuestion() {
+        progressBar.setVisibility(View.VISIBLE);// Show the ProgressBar before fetching questions
         // Remove color for the current question number
         dotViews[currentQuestionIndex % maxNumberOfDots].setTextColor(Color.parseColor("#000000"));
 
@@ -385,6 +388,7 @@ public class MainActivity3 extends AppCompatActivity {
 
         // Set color for the new current question number
         dotViews[currentQuestionIndex % maxNumberOfDots].setTextColor(Color.parseColor("#FFFFFF"));
+        progressBar.setVisibility(View.GONE);
     }
     // Modify the startTimer() method as follows:
     private void startTimer() {
