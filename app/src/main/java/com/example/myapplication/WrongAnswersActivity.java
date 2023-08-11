@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -18,25 +19,24 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatRadioButton;
-import com.google.android.material.color.utilities.Score;
 
 import java.util.ArrayList;
 public class WrongAnswersActivity extends AppCompatActivity {
-    TextView scoreTextView; // Add this line
-
-
+    TextView scoreTextView;
+    int scoreValue;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wrong_answers);
-        scoreTextView = findViewById(R.id.ScoreTextView);
+         scoreTextView = findViewById(R.id.ScoreTextView); // Keep this line
+
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
             Drawable actionBarBackground = getResources().getDrawable(R.drawable.view_background);
             actionBar.setBackgroundDrawable(actionBarBackground);
             // Create a SpannableString to apply custom styles
@@ -50,8 +50,8 @@ public class WrongAnswersActivity extends AppCompatActivity {
             // Set the styled SpannableString as the title
             actionBar.setTitle(spannableString);
         }
-        int scoreValue = getIntent().getIntExtra("scoreKey", 0);
-        TextView scoreTextView = findViewById(R.id.ScoreTextView);
+         scoreValue = getIntent().getIntExtra("scoreKey", 0);
+         scoreTextView = findViewById(R.id.ScoreTextView);
 
         scoreTextView.setText("Score: " + scoreValue);
 
@@ -76,7 +76,6 @@ public class WrongAnswersActivity extends AppCompatActivity {
                 String[] choices = wrongAnswer.getChoices();
                 for (int i = 1; i <= 4; i++) {
                     RadioButton radioButton = (AppCompatRadioButton) inflater.inflate(R.layout.custom_radio_button, choicesRadioGroup, false);
-
                     radioButton.setText(choices[i]);
                     radioButton.setEnabled(false);
                     choicesRadioGroup.addView(radioButton);
@@ -91,13 +90,28 @@ public class WrongAnswersActivity extends AppCompatActivity {
             }
         } else {
             Toast.makeText(this, "Congratulations", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(WrongAnswersActivity.this, MainActivity3.class);
+            Intent intent = new Intent(WrongAnswersActivity.this, HomeActivity.class);
             startActivity(intent);
             finish();
         }
         Button finishButton = findViewById(R.id.finishButton);
+
         finishButton.setOnClickListener(view -> {
-            finish();
+          finish();
+            Intent intent = new Intent(WrongAnswersActivity.this, HomeActivity.class);
+            startActivity(intent);
         });
+
+        long currentTimeMillis = System.currentTimeMillis();
+
+        // Save the score and timestamp to SharedPreferences or a database
+        // For example, using SharedPreferences
+
+        SharedPreferences preferences = getSharedPreferences("ScoreHistory", MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt("score_" + currentTimeMillis, scoreValue);
+        editor.putLong("timestamp_" + currentTimeMillis, currentTimeMillis);
+        editor.apply();
+
     }
 }

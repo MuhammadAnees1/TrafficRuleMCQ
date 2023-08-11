@@ -1,14 +1,9 @@
 package com.example.myapplication;
 
-
-import static com.example.myapplication.QuizDatabaseHelper.COLUMN_CHOICES;
-import static com.example.myapplication.QuizDatabaseHelper.COLUMN_CORRECT_ANSWER;
-import static com.example.myapplication.QuizDatabaseHelper.COLUMN_QUESTION;
-import static com.example.myapplication.QuizDatabaseHelper.TABLE_QUESTIONS;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -18,8 +13,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Handler;
-import android.os.Parcelable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -27,7 +20,6 @@ import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
@@ -40,6 +32,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatRadioButton;
+import androidx.core.content.res.ResourcesCompat;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
@@ -55,9 +49,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class MainActivity3 extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
     private TextView questionTextView;
-    Button  nextButton;
+    Button  nextButton , Retry;
     private DatabaseReference databaseReference;
     private RadioGroup option1RadioGroup;
     private TextView timerTextView;
@@ -68,17 +62,17 @@ public class MainActivity3 extends AppCompatActivity {
     private TextView[] dotViews = new TextView[maxNumberOfDots];
     private int currentQuestionIndex = 0;
     ProgressBar progressBar;
-
     View blurOverlay;
     Map<String, String> questionMap = new HashMap<>();
     ArrayList<WrongAnswer> wrongAnswersList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main3);
+        setContentView(R.layout.activity_main);
 
         progressBar = findViewById(R.id.progressBar);
         blurOverlay = findViewById(R.id.blurOverlay);
+
         blurOverlay.setVisibility(View.VISIBLE);// Show the ProgressBar before fetching questions
         progressBar.setVisibility(View.VISIBLE); // Show the ProgressBar before fetching questions
         Score = 0;
@@ -98,8 +92,8 @@ public class MainActivity3 extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-
-            Drawable actionBarBackground = getResources().getDrawable(R.drawable.view_background);
+            Resources res = getResources();
+            Drawable actionBarBackground = ResourcesCompat.getDrawable(res,R.drawable.view_background,null);
             actionBar.setBackgroundDrawable(actionBarBackground);
             // Create a SpannableString to apply custom styles
             SpannableString spannableString = new SpannableString("Traffic Rules Quiz App");
@@ -118,11 +112,15 @@ public class MainActivity3 extends AppCompatActivity {
         option1RadioGroup = findViewById(R.id.optionRadioGroup2);
         timerTextView = findViewById(R.id.timerTextView1);
         nextButton = findViewById(R.id.nextButton);
+        Retry=findViewById(R.id.Retry);
         nextButton.setEnabled(false);
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("Questions");
         fetchQuestions();
 
+        Retry.setOnClickListener(view -> {
+            fetchQuestions();
+        });
 
         nextButton.setOnClickListener(view -> {
             showNextQuestion();
@@ -139,7 +137,22 @@ public class MainActivity3 extends AppCompatActivity {
                     databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            updateDatabaseFromFirebase(dataSnapshot);
+                            QuizDatabaseHelper dbHelper = new QuizDatabaseHelper(MainActivity.this);
+                            SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+                            db.delete(QuizDatabaseHelper.TABLE_QUESTIONS, null, null);
+
+                            for (DataSnapshot questionSnapshot : dataSnapshot.getChildren()) {
+                                String question = questionSnapshot.getKey();
+                                String choice = questionSnapshot.getValue().toString();
+
+                                ContentValues values = new ContentValues();
+                                values.put(QuizDatabaseHelper.COLUMN_QUESTION, question);
+                                values.put(QuizDatabaseHelper.COLUMN_CHOICES, choice);
+                                long newRowId = db.insert(QuizDatabaseHelper.TABLE_QUESTIONS, null, values);
+                            }
+
+                            db.close();
                             loadQuestionsFromDatabase();
                         }
 
@@ -152,30 +165,9 @@ public class MainActivity3 extends AppCompatActivity {
                 } else {
                     loadQuestionsFromDatabase();
                 }
-
     }
-
-    private void updateDatabaseFromFirebase(DataSnapshot dataSnapshot) {
-        QuizDatabaseHelper dbHelper = new QuizDatabaseHelper(MainActivity3.this);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        db.delete(QuizDatabaseHelper.TABLE_QUESTIONS, null, null);
-
-        for (DataSnapshot questionSnapshot : dataSnapshot.getChildren()) {
-            String question = questionSnapshot.getKey();
-            String choice = questionSnapshot.getValue().toString();
-
-            ContentValues values = new ContentValues();
-            values.put(QuizDatabaseHelper.COLUMN_QUESTION, question);
-            values.put(QuizDatabaseHelper.COLUMN_CHOICES, choice);
-            long newRowId = db.insert(QuizDatabaseHelper.TABLE_QUESTIONS, null, values);
-        }
-
-        db.close();
-    }
-
     private void loadQuestionsFromDatabase() {
-        QuizDatabaseHelper dbHelper = new QuizDatabaseHelper(MainActivity3.this);
+        QuizDatabaseHelper dbHelper = new QuizDatabaseHelper(MainActivity.this);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         String[] projection = {QuizDatabaseHelper.COLUMN_QUESTION, QuizDatabaseHelper.COLUMN_CHOICES};
@@ -188,7 +180,6 @@ public class MainActivity3 extends AppCompatActivity {
                 null,
                 null
         );
-
         questionMap.clear();
         while (cursor.moveToNext()) {
             String question = cursor.getString(cursor.getColumnIndexOrThrow(QuizDatabaseHelper.COLUMN_QUESTION));
@@ -213,7 +204,9 @@ public class MainActivity3 extends AppCompatActivity {
                 public void onFinish() {
                     progressBar.setVisibility(View.GONE);
                     blurOverlay.setVisibility(View.GONE);
-                    Toast.makeText(MainActivity3.this, "NO internet Connection && data in Database", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "NO internet Connection && data in Database", Toast.LENGTH_SHORT).show();
+                    nextButton.setVisibility(View.GONE);
+                    Retry.setVisibility(View.VISIBLE);
                 }
             }.start();
         }
@@ -304,8 +297,6 @@ public class MainActivity3 extends AppCompatActivity {
             String correctOption = choicesArray[5];
 
             option1RadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
-
-
                 RadioButton selectedRadioButton = findViewById(checkedId);
                 if (selectedRadioButton != null) {
                     nextButton.setEnabled(true);
@@ -350,7 +341,7 @@ public class MainActivity3 extends AppCompatActivity {
                 }
             });
         } else {
-            Toast.makeText(MainActivity3.this, "Your text is not displaying.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "Your text is not displaying.", Toast.LENGTH_SHORT).show();
         }
 
         cursor.close();
@@ -360,7 +351,7 @@ public class MainActivity3 extends AppCompatActivity {
         Log.e("ERROR", "Fetching questions failed: " + errorMessage);
     }
     private void showFinalScore() {
-        Intent intent = new Intent(MainActivity3.this, WrongAnswersActivity.class);
+        Intent intent = new Intent(MainActivity.this, WrongAnswersActivity.class);
         intent.putExtra("scoreKey", Score);
         intent.putParcelableArrayListExtra("wrongAnswersList", wrongAnswersList);
         startActivity(intent);
@@ -428,7 +419,6 @@ public class MainActivity3 extends AppCompatActivity {
                 wrongAnswersList.add(wrongAnswer);
             }
         }
-
         // Move to the next question
         showNextQuestion();
     }

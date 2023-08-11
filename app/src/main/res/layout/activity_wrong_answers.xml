@@ -6,6 +6,9 @@
     android:padding="16dp"
     tools:context=".WrongAnswersActivity">
 
+
+
+
     <TextView
         android:id="@+id/ScoreTextView"
         android:layout_width="wrap_content"
@@ -35,6 +38,8 @@
         android:layout_below="@id/titleTextView1"
         tools:ignore="SpeakableTextPresentCheck">
 
+
+
         <LinearLayout
             android:id="@+id/containerLayout"
             android:layout_width="match_parent"
@@ -44,6 +49,7 @@
 
             <!-- Display wrong answers dynamically using a loop in Java code -->
         </LinearLayout>
+
     </ScrollView>
 
 <androidx.appcompat.widget.AppCompatButton

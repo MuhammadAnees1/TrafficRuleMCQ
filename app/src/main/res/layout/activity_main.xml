@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#fef4df"
-    tools:context=".MainActivity3">
+    tools:context=".MainActivity">
 
 
     <LinearLayout
@@ -61,15 +61,16 @@
                 tools:ignore="SpeakableTextPresentCheck">
 
 
-                    <TextView
-                        android:id="@+id/questionTextView1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="20dp"
-                        android:textColor="@color/black"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        tools:text="Question Text" />
+                <TextView
+                    android:id="@+id/questionTextView1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    tools:text="Question Text" />
 
                 <ImageView
                         android:id="@+id/questionImageView4"
@@ -108,6 +109,18 @@
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="20dp"
         android:text="Next"
+        android:textColor="@color/white"
+        android:textSize="20sp" />
+    <Button
+        android:id="@+id/Retry"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="20dp"
+        android:text="Try again"
         android:textColor="@color/white"
         android:textSize="20sp" />
 
