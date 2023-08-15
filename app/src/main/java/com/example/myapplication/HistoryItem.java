@@ -3,14 +3,14 @@ package com.example.myapplication;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-
 public class HistoryItem {
-    private int score;
+    private int score, totalScore;
     private long timestamp;
 
-    public HistoryItem(int score, long timestamp) {
+    public HistoryItem(int score, long timestamp, int totalScore) {
         this.score = score;
         this.timestamp = timestamp;
+        this.totalScore = totalScore;
     }
 
     public int getScore() {
@@ -19,6 +19,10 @@ public class HistoryItem {
 
     public long getTimestamp() {
         return timestamp;
+    }
+
+    public int getTotalScore() {
+        return totalScore;
     }
 
     public String getFormattedTimestamp() {

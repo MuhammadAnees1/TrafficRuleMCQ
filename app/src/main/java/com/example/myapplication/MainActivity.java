@@ -32,11 +32,17 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatRadioButton;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -52,14 +58,15 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
     private TextView questionTextView;
     Button  nextButton , Retry;
+    private AdView adView;
     private DatabaseReference databaseReference;
     private RadioGroup option1RadioGroup;
     private TextView timerTextView;
     private CountDownTimer countDownTimer;
     private static final long COUNTDOWN_DURATION = 15000; // 30 seconds
     static int Score = 0;
-    private int maxNumberOfDots = 5; // Maximum number of dots on the timeline
-    private TextView[] dotViews = new TextView[maxNumberOfDots];
+    private final int maxNumberOfDots = 5; // Maximum number of dots on the timeline
+    private final TextView[] dotViews = new TextView[maxNumberOfDots];
     private int currentQuestionIndex = 0;
     ProgressBar progressBar;
     View blurOverlay;
@@ -73,10 +80,21 @@ public class MainActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         blurOverlay = findViewById(R.id.blurOverlay);
 
-        blurOverlay.setVisibility(View.VISIBLE);// Show the ProgressBar before fetching questions
+        blurOverlay.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.VISIBLE); // Show the ProgressBar before fetching questions
         Score = 0;
-// timeline
+
+        adView = findViewById(R.id.adView);
+
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+                // AdMob initialization is complete, you can proceed to load ads here if needed.
+                loadAds();
+            }
+        });
+
+// timelne
         dotViews[0] = findViewById(R.id.dotView1);
         dotViews[1] = findViewById(R.id.dotView2);
         dotViews[2] = findViewById(R.id.dotView3);
@@ -127,6 +145,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void loadAds() {
+        // Load ads using AdRequest
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+    }
+
     private void fetchQuestions() {
         progressBar.setVisibility(View.VISIBLE);
         blurOverlay.setVisibility(View.VISIBLE);
@@ -155,7 +179,6 @@ public class MainActivity extends AppCompatActivity {
                             db.close();
                             loadQuestionsFromDatabase();
                         }
-
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
                             onError(databaseError.getMessage());
@@ -200,7 +223,6 @@ public class MainActivity extends AppCompatActivity {
                     blurOverlay.setVisibility(View.VISIBLE);
                     // Timer is ticking every second
                 }
-
                 public void onFinish() {
                     progressBar.setVisibility(View.GONE);
                     blurOverlay.setVisibility(View.GONE);
@@ -262,7 +284,6 @@ public class MainActivity extends AppCompatActivity {
 
             String imageURL = choicesArray[choicesArray.length - 1];
             ImageView imageView = findViewById(R.id.questionImageView4);
-
             Glide.with(this)
                     .load(imageURL)
 //                    .error(R.drawable.placeholder_error) // Add an error placeholder drawable
@@ -272,6 +293,7 @@ public class MainActivity extends AppCompatActivity {
                             // Image loaded successfully, set it to the ImageView and make it visible
                             imageView.setImageDrawable(resource);
                             imageView.setVisibility(View.VISIBLE);
+                            adView.setVisibility(View.GONE);
                         }
 
                         @Override
@@ -279,12 +301,14 @@ public class MainActivity extends AppCompatActivity {
                             // This method is called when the resource is cleared
                             // Set the ImageView visibility to GONE as there was an error loading the image
                             imageView.setVisibility(View.GONE);
+                            adView.setVisibility(View.VISIBLE);
 
                         }
 
                         @Override
                         public void onLoadFailed(@Nullable Drawable errorDrawable) {
                             // Error loading the image, set the ImageView visibility to GONE
+                            adView.setVisibility(View.VISIBLE);
                             imageView.setVisibility(View.GONE);
                             progressBar.setVisibility(View.GONE);// Show the ProgressBar before fetching questions
                         }
@@ -300,7 +324,8 @@ public class MainActivity extends AppCompatActivity {
                 RadioButton selectedRadioButton = findViewById(checkedId);
                 if (selectedRadioButton != null) {
                     nextButton.setEnabled(true);
-                    nextButton.setBackground(getResources().getDrawable(R.drawable.button_background));
+                    Drawable drawable = ContextCompat.getDrawable(this, R.drawable.button_background);
+                    nextButton.setBackground(drawable);
 
                     String selectedOption = selectedRadioButton.getText().toString();
 
@@ -353,6 +378,7 @@ public class MainActivity extends AppCompatActivity {
     private void showFinalScore() {
         Intent intent = new Intent(MainActivity.this, WrongAnswersActivity.class);
         intent.putExtra("scoreKey", Score);
+        intent.putExtra("totalScore", questionMap.size());
         intent.putParcelableArrayListExtra("wrongAnswersList", wrongAnswersList);
         startActivity(intent);
     }

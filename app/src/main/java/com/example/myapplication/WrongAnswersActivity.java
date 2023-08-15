@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -23,11 +24,12 @@ import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatRadioButton;
+import androidx.core.content.res.ResourcesCompat;
 
 import java.util.ArrayList;
 public class WrongAnswersActivity extends AppCompatActivity {
     TextView scoreTextView;
-    int scoreValue;
+    int scoreValue , totalScore;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +39,8 @@ public class WrongAnswersActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            Drawable actionBarBackground = getResources().getDrawable(R.drawable.view_background);
+            Resources res = getResources();
+            Drawable actionBarBackground = ResourcesCompat.getDrawable(res,R.drawable.view_background,null);
             actionBar.setBackgroundDrawable(actionBarBackground);
             // Create a SpannableString to apply custom styles
             SpannableString spannableString = new SpannableString("Traffic Rules");
@@ -54,6 +57,8 @@ public class WrongAnswersActivity extends AppCompatActivity {
          scoreTextView = findViewById(R.id.ScoreTextView);
 
         scoreTextView.setText("Score: " + scoreValue);
+
+        totalScore= getIntent().getIntExtra("totalScore" ,0);
 
         ArrayList<WrongAnswer> wrongAnswersList = getIntent().getParcelableArrayListExtra("wrongAnswersList");
 
@@ -106,10 +111,10 @@ public class WrongAnswersActivity extends AppCompatActivity {
 
         // Save the score and timestamp to SharedPreferences or a database
         // For example, using SharedPreferences
-
         SharedPreferences preferences = getSharedPreferences("ScoreHistory", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt("score_" + currentTimeMillis, scoreValue);
+        editor.putInt("totalScore_" + currentTimeMillis, totalScore); // Use consistent key prefix
         editor.putLong("timestamp_" + currentTimeMillis, currentTimeMillis);
         editor.apply();
 

@@ -6,7 +6,7 @@
     android:layout_margin="20dp">
 
     <TextView
-        android:id="@+id/TotalScore"
+        android:id="@+id/TotalScore1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
@@ -27,7 +27,7 @@
         android:text="Round"
         android:textColor="#808080"
         android:textSize="14sp"
-        app:layout_constraintTop_toBottomOf="@+id/TotalScore"
+        app:layout_constraintTop_toBottomOf="@+id/TotalScore1"
         app:layout_constraintStart_toStartOf="parent"
          />
 
@@ -40,7 +40,7 @@
         android:text="Time"
         android:textColor="#808080"
         android:textSize="14sp"
-        app:layout_constraintTop_toBottomOf="@+id/TotalScore"
+        app:layout_constraintTop_toBottomOf="@+id/TotalScore1"
         app:layout_constraintStart_toEndOf="@+id/Date"
          />
 

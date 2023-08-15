@@ -27,19 +27,23 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         HistoryItem historyItem = historyItems.get(position);
         holder.scoreTextView.setText("Score: " + historyItem.getScore());
         holder.timestampTextView.setText(historyItem.getFormattedTimestamp());
+        holder.TotalScore.setText("TotalScore: " + historyItem.getTotalScore());
     }
     @Override
     public int getItemCount() {
         return historyItems.size();
     }
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView scoreTextView;
+        TextView scoreTextView,TotalScore;
         TextView timestampTextView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             scoreTextView = itemView.findViewById(R.id.HistoryScore1);
             timestampTextView = itemView.findViewById(R.id.Date);
+            TotalScore = itemView.findViewById(R.id.TotalScore1);
+
+
         }
     }
 }

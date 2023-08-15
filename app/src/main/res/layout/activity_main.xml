@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:background="#fef4df"
     tools:context=".MainActivity">
 
@@ -76,6 +77,15 @@
                         android:id="@+id/questionImageView4"
                         android:layout_width="match_parent"
                         android:layout_height="180dp" />
+
+                <com.google.android.gms.ads.AdView
+                    android:visibility="gone"
+                    android:id="@+id/adView"
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    ads:adSize="BANNER"
+                    ads:adUnitId="ca-app-pub-3940256099942544/6300978111"
+                    tools:ignore="MissingClass" />
 
 
                     <ProgressBar

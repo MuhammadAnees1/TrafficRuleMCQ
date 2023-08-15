@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -50,7 +51,8 @@ public class HistoryFragment extends Fragment {
             if (key.startsWith("score_")) {
                 int score = preferences.getInt(key, 0);
                 long timestamp = preferences.getLong("timestamp_" + key.substring(6), 0);
-                itemList.add(new HistoryItem(score, timestamp));
+                int totalScore = preferences.getInt("totalScore_" + key.substring(6), 0);
+                itemList.add(new HistoryItem(score, timestamp, totalScore));
             }
         }
 
