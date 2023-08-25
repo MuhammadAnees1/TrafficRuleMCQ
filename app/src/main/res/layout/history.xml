@@ -3,14 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="20dp">
+    android:background="#FFF59D"
+    android:layout_margin="10dp">
 
     <TextView
-        android:id="@+id/TotalScore1"
+        android:id="@+id/HistoryScore1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:text="TotalScore"
+        android:text="Score"
         android:textColor="#000000"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -22,37 +23,28 @@
         android:id="@+id/Date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:layout_marginStart="10dp"
-        android:text="Round"
-        android:textColor="#808080"
-        android:textSize="14sp"
-        app:layout_constraintTop_toBottomOf="@+id/TotalScore1"
-        app:layout_constraintStart_toStartOf="parent"
-         />
-
-    <TextView
-        android:id="@+id/Time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="22dp"
         android:layout_marginTop="16dp"
-        android:text="Time"
-        android:textColor="#808080"
+        android:layout_marginBottom="5dp"
+        android:text="Round"
+        android:textColor="#555353"
         android:textSize="14sp"
-        app:layout_constraintTop_toBottomOf="@+id/TotalScore1"
-        app:layout_constraintStart_toEndOf="@+id/Date"
-         />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/HistoryScore1" />
+
 
     <TextView
-        android:id="@+id/HistoryScore1"
+
+        android:id="@+id/TotalScore1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="30dp"
-        android:text="Score"
-        android:textColor="#808080"
+        android:text="TotalScore"
+        android:layout_marginEnd="5dp"
+        android:textColor="#555353"
         android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/Time"
+        app:layout_constraintBottom_toBottomOf="@+id/Date"
         app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

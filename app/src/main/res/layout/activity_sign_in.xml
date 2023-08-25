@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".sign_inActivity">
+    tools:context="com.NestTechVentures.trafficquiz.views.sign_inActivity">
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/bt_sign_in"

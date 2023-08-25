@@ -16,5 +16,6 @@
     <style name="RadioButtonNoButtonStyle" parent="Widget.AppCompat.CompoundButton.RadioButton">
         <item name="android:button">@null</item>
         <item name="android:buttonTint">@null</item>
+        <item name="android:windowFullscreen">true</item>
     </style>
 </resources>

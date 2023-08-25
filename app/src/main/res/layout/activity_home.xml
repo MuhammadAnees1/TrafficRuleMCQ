@@ -1,104 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#fef4df"
-    tools:context=".HomeActivity">
+    android:id="@+id/view5"
+    android:gravity="center"
+    tools:context="com.NestTechVentures.trafficquiz.views.HomeActivity">
 
+        <ImageView
+            android:id="@+id/view1"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/home_page" />
 
-    <ImageView
-    android:id="@+id/historyButton"
-    android:layout_width="30dp"
-    android:layout_height="50dp"
-    android:src="@drawable/history"
-    android:layout_marginTop="20dp"
-    android:layout_marginEnd="20dp"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintEnd_toEndOf="parent" />
+        <TextView
+            android:id="@+id/view12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/view1"
+            android:layout_centerHorizontal="true"
+            android:fontFamily="@font/oswald_semibold"
+            android:text="TRAFFIC RULES"
+            android:textAlignment="center"
+            android:textColor="#FF7800"
+            android:textSize="33sp" />
 
-
-    <FrameLayout
-        android:id="@+id/home_fragment_container"
+    <TextView
+        android:id="@+id/view2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/historyButton"
-        tools:ignore="MissingConstraints">
+        android:layout_below="@id/view12"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:fontFamily="sans-serif-black"
+        android:layout_marginBottom="20dp"
+        android:text="@string/welcome_to_your_home"
+        android:textAlignment="center"
+        android:textColor="#FF7043"
+        android:textSize="18sp" />
 
         <LinearLayout
+            android:id="@+id/layout1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:padding="10dp">
+            android:layout_below="@id/view2"
+            android:layout_alignParentEnd="true"
+            android:orientation="vertical">
 
 
-            <TextView
-                android:id="@+id/textView5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="40dp"
-                android:fontFamily="@font/andika_new_basic_bold_italic"
-                android:text="Traffic Rules Quiz"
-                android:textColor="#000000"
-                android:textSize="28sp"
-                android:textStyle="bold" />
-
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_margin="20dp"
-                android:src="@drawable/traffic_image"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                tools:ignore="MissingConstraints"
-                tools:layout_editor_absoluteY="170dp" />
-
-            <TextView
-                android:id="@+id/textView23"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:fontFamily="sans-serif"
-                android:gravity="center"
-                android:text="Play to gain Your knowledge"
-                android:textColor="@android:color/black"
-                android:textSize="28sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@+id/imageView" />
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:gravity="center"
-                android:text="@string/text"
-                android:textColor="@android:color/black"
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/historyButton7"
+                android:layout_width="250dp"
+                android:layout_height="57dp"
+                android:layout_marginTop="40dp"
+                android:text="History"
+                android:textColor="#FFFFFF"
                 android:textSize="20sp"
-                app:layout_constraintTop_toBottomOf="@+id/textView23" />
+                android:layout_gravity="center"
+                android:background="@drawable/button_background1"
+                android:shadowColor="#A8A8A8"
+                android:shadowRadius="5"/>
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/getStarted1"
+                android:text="START QUIZ"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:layout_marginTop="50dp"
+                android:layout_marginBottom="50dp"
+                android:layout_gravity="center"
+                android:layout_width="250dp"
+                android:layout_height="57dp"
+                android:background="@drawable/button_background1"
+                android:shadowColor="#A8A8A8"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="5"/>
 
 
         </LinearLayout>
-    </FrameLayout>
-
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/getStarted"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/button_background"
-        android:paddingLeft="60dp"
-        android:paddingRight="60dp"
-        android:text="Start Quiz"
-        android:textColor="#FFFFFF"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </RelativeLayout>

@@ -5,8 +5,7 @@
     android:layout_height="match_parent"
     xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:background="#fef4df"
-    tools:context=".MainActivity">
-
+    tools:context="com.NestTechVentures.trafficquiz.MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,30 +13,46 @@
         android:layout_above="@id/nextButton"
         android:orientation="vertical">
 
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/view_background">
+            android:background="@drawable/view_background2">
 
             <include
                 android:id="@+id/time_line"
-                layout="@layout/time_line_layout" />
+                layout="@layout/time_line_layout"
+                />
+
+            <View
+                android:id="@+id/blurOverlay"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#fef4df" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center" />
 
             <TextView
                 android:id="@+id/timerTextView1"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:layout_below="@+id/time_line"
                 android:textColor="#FFFFFF"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:layout_margin="10dp"
                 android:text="00:00"
                 tools:ignore="MissingConstraints" />
 
         </RelativeLayout>
+
 
         <ScrollView
             android:layout_width="match_parent"
@@ -47,13 +62,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-
-            <View
-                android:id="@+id/blurOverlay"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone"
-                android:background="#88000000" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -67,49 +75,47 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
-                    android:fontFamily="sans-serif-medium"
+                    android:fontFamily="@font/montserrat_bold"
                     android:textColor="@color/black"
-                    android:textSize="18sp"
+                    android:textSize="17sp"
                     android:textStyle="bold"
                     tools:text="Question Text" />
 
                 <ImageView
+                    android:visibility="gone"
                         android:id="@+id/questionImageView4"
                         android:layout_width="match_parent"
                         android:layout_height="180dp" />
-
-                <com.google.android.gms.ads.AdView
-                    android:visibility="gone"
-                    android:id="@+id/adView"
-                    android:layout_width="match_parent"
-                    android:layout_height="180dp"
-                    ads:adSize="BANNER"
-                    ads:adUnitId="ca-app-pub-3940256099942544/6300978111"
-                    tools:ignore="MissingClass" />
-
-
-                    <ProgressBar
-                        android:id="@+id/progressBar"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center" />
 
                     <RadioGroup
                         android:id="@+id/optionRadioGroup2"
                         style="@style/RadioButtonNoButtonStyle"
                         android:layout_width="match_parent"
-                        android:layout_height="250dp"
+                        android:layout_height="wrap_content"
                         android:layout_margin="10dp"
                         android:orientation="vertical"
                         tools:ignore="SpeakableTextPresentCheck">
 
                     </RadioGroup>
+
             </LinearLayout>
         </FrameLayout>
         </ScrollView>
+
     </LinearLayout>
 
-
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignBottom="@+id/nextButton"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="center"
+        android:layout_marginBottom="50dp"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-3940256099942544/6300978111"
+        tools:ignore="MissingClass" />
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/nextButton"
         android:layout_width="match_parent"

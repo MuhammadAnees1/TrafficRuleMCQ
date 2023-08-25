@@ -4,9 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:context=".WrongAnswersActivity">
-
-
+    android:background="#fef4df"
+    tools:context="com.NestTechVentures.trafficquiz.views.WrongAnswersActivity">
 
 
     <TextView
@@ -25,7 +24,7 @@
         android:layout_height="wrap_content"
         android:text="Wrong Answers"
         android:layout_below="@+id/ScoreTextView"
-        android:textSize="24sp"
+        android:textSize="20sp"
         android:textColor="#000000"
         android:textStyle="bold"
         android:layout_centerHorizontal="true"
@@ -54,12 +53,14 @@
 
 <androidx.appcompat.widget.AppCompatButton
     android:id="@+id/finishButton"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_width="250dp"
+    android:layout_height="50dp"
     android:text="Finish"
-    android:background="@drawable/button_background"
+    android:textColor="@color/white"
+    android:textSize="18dp"
+    android:background="@drawable/button_background1"
     android:layout_alignParentBottom="true"
     android:layout_centerHorizontal="true"
-    android:layout_marginBottom="16dp" />
+     />
 
     </RelativeLayout >

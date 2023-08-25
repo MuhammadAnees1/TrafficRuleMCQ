@@ -2,5 +2,13 @@
     <string name="app_name">Quiz Rules</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
-    <string name="text">A quiz is a form of assessment that is generally shorter than a traditional test or exam. It typically covers a specific topic or a limited set of concepts. Unlike comprehensive exams.</string>
+    <string name="text">You did a fantastic job</string>
+
+    <string name="banner_ad">ca-app-pub-3940256099942544/6300978111</string>
+
+
+    <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
+    <string name="admob_interstitial_id">ca-app-pub-3940256099942544/1033173712</string>
+    <string name="congratulation_s">Congratulation\'s</string>
+    <string name="welcome_to_your_home">Welcome to your home</string>
 </resources>
