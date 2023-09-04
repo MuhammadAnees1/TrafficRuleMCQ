@@ -1,4 +1,4 @@
-package com.NestTechVentures.trafficquiz;
+package com.NestTechVentures.trafficquiz.viewModels;
 
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
@@ -66,6 +66,7 @@ public class AdvertisementHelper {
         AdRequest adRequest = new AdRequest.Builder().build();
         bannerAdView.loadAd(adRequest);
     }
+
 
     public void pauseBannerAd() {
         if (bannerAdView != null) {

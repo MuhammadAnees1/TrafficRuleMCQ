@@ -4,11 +4,19 @@
     <string name="previous">Previous</string>
     <string name="text">You did a fantastic job</string>
 
-    <string name="banner_ad">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="banner_ad">ca-app-pub-9450593718451844/4785025100</string>
 
 
-    <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
-    <string name="admob_interstitial_id">ca-app-pub-3940256099942544/1033173712</string>
+    <string name="admob_app_id">ca-app-pub-9450593718451844~4805206409</string>
+    <string name="admob_interstitial_id">ca-app-pub-9450593718451844/6141466661</string>
     <string name="congratulation_s">Congratulation\'s</string>
     <string name="welcome_to_your_home">Welcome to your home</string>
+    <string name="history">History</string>
+    <string name="start_quiz">START QUIZ</string>
+    <string name="traffic_rules">TRAFFIC RULES</string>
+    <string name="go_to_home">Go to Home</string>
+    <string name="next_button">Next</string>
+    <string name="score_s_0000">Score\'s :- 0000</string>
+    <string name="wrong_answers">Wrong Answers</string>
+    <string name="finish">Finish</string>
 </resources>

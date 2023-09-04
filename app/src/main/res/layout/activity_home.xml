@@ -3,36 +3,38 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fef4df"
+    android:background="#FFF59D"
     android:id="@+id/view5"
     android:gravity="center"
     tools:context="com.NestTechVentures.trafficquiz.views.HomeActivity">
 
-        <ImageView
-            android:id="@+id/view1"
-            android:layout_width="250dp"
-            android:layout_height="250dp"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/home_page" />
+    <ImageView
+        android:id="@+id/view1"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/traffic_home3" />
 
-        <TextView
-            android:id="@+id/view12"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/view1"
-            android:layout_centerHorizontal="true"
-            android:fontFamily="@font/oswald_semibold"
-            android:text="TRAFFIC RULES"
-            android:textAlignment="center"
-            android:textColor="#FF7800"
-            android:textSize="33sp" />
+    <TextView
+        android:id="@+id/view12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/view1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/oswald_semibold"
+        android:text="@string/traffic_rules"
+        android:textAlignment="center"
+        android:textColor="#FF7800"
+        android:textSize="38sp" />
 
     <TextView
         android:id="@+id/view2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/view12"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp"
         android:fontFamily="sans-serif-black"
@@ -40,47 +42,36 @@
         android:text="@string/welcome_to_your_home"
         android:textAlignment="center"
         android:textColor="#FF7043"
-        android:textSize="18sp" />
+        android:textSize="22sp" />
 
-        <LinearLayout
-            android:id="@+id/layout1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/view2"
-            android:layout_alignParentEnd="true"
-            android:orientation="vertical">
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/historyButton7"
+        android:layout_width="250dp"
+        android:layout_height="57dp"
+        android:layout_below="@id/view2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/button_background1"
+        android:shadowColor="#A8A8A8"
+        android:shadowRadius="5"
+        android:text="@string/history"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp" />
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/getStarted1"
+        android:layout_width="250dp"
+        android:layout_height="57dp"
+        android:layout_below="@id/historyButton7"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/button_background1"
+        android:shadowColor="#A8A8A8"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5"
+        android:text="@string/start_quiz"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/historyButton7"
-                android:layout_width="250dp"
-                android:layout_height="57dp"
-                android:layout_marginTop="40dp"
-                android:text="History"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:layout_gravity="center"
-                android:background="@drawable/button_background1"
-                android:shadowColor="#A8A8A8"
-                android:shadowRadius="5"/>
-
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/getStarted1"
-                android:text="START QUIZ"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:layout_marginTop="50dp"
-                android:layout_marginBottom="50dp"
-                android:layout_gravity="center"
-                android:layout_width="250dp"
-                android:layout_height="57dp"
-                android:background="@drawable/button_background1"
-                android:shadowColor="#A8A8A8"
-                android:shadowDx="0"
-                android:shadowDy="0"
-                android:shadowRadius="5"/>
-
-
-        </LinearLayout>
-    </RelativeLayout>
+</RelativeLayout>

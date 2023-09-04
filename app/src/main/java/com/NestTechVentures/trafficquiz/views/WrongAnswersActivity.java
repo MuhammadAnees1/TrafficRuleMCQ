@@ -6,7 +6,6 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -102,16 +101,12 @@ public class WrongAnswersActivity extends AppCompatActivity {
                                 imageView.setVisibility(View.VISIBLE);
 
                             }
-
                             @Override
                             public void onLoadCleared(@Nullable Drawable placeholder) {
                                 // This method is called when the resource is cleared
                                 // Set the ImageView visibility to GONE as there was an error loading the image
                                 imageView.setVisibility(View.GONE);
-
-
                             }
-
                             @Override
                             public void onLoadFailed(@Nullable Drawable errorDrawable) {
                                 // Error loading the image, set the ImageView visibility to GONE

@@ -12,7 +12,7 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@drawable/traffic_home"
+        android:icon="@drawable/traffic_app"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
@@ -27,16 +27,13 @@
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713" />
+            android:value="ca-app-pub-9450593718451844~4805206409" />
 
         <activity
             android:name="com.NestTechVentures.trafficquiz.MainActivity"
             android:exported="false" />
         <activity
             android:name="com.NestTechVentures.trafficquiz.views.WrongAnswersActivity"
-            android:exported="false" />
-        <activity
-            android:name="com.NestTechVentures.trafficquiz.views.sign_inActivity"
             android:exported="false" />
         <activity
             android:name="com.NestTechVentures.trafficquiz.views.HomeActivity"

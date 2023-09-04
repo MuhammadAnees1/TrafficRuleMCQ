@@ -42,13 +42,16 @@
                 android:id="@+id/timerTextView1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
                 android:layout_below="@+id/time_line"
-                android:textColor="#FFFFFF"
-                android:textStyle="bold"
-                android:textAlignment="center"
-                android:layout_margin="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
                 android:text="00:00"
+                android:textAlignment="center"
+                android:textColor="#D0FFFF8D"
+                android:textSize="16sp"
+                android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
         </RelativeLayout>
@@ -67,7 +70,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                tools:ignore="SpeakableTextPresentCheck">
+                tools:ignore="SpeakableTextPresentCheck,UselessParent">
 
 
                 <TextView
@@ -114,19 +117,22 @@
         android:layout_gravity="center"
         android:layout_marginBottom="50dp"
         ads:adSize="BANNER"
-        ads:adUnitId="ca-app-pub-3940256099942544/6300978111"
+        ads:adUnitId="ca-app-pub-9450593718451844/4785025100"
         tools:ignore="MissingClass" />
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/nextButton"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="20dp"
-        android:text="Next"
-        android:textColor="@color/white"
-        android:textSize="20sp" />
+        android:text="@string/next_button"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        tools:ignore="VisualLintButtonSize" />
     <Button
         android:id="@+id/Retry"
         android:visibility="gone"
